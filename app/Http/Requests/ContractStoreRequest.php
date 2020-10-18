@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Property;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ContractStoreRequest extends FormRequest
@@ -30,5 +31,27 @@ class ContractStoreRequest extends FormRequest
             'type_id' => 'required|exists:contract_types,id',
             'property_id' => 'required|exists:properties,id',
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+
+            // Property can only have one contract
+            if ($propertyId = $this->get('property_id')) {
+                $property = Property::find($propertyId);
+
+                if ($property && $property->contract()->count()) {
+                    $validator->errors()->add('property_id', 'The selected property id already has a contract.');
+                }
+            }
+
+        });
     }
 }

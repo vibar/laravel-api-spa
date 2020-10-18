@@ -16,6 +16,8 @@ class ContractController extends Controller
      */
     public function store(ContractStoreRequest $request)
     {
+        // TODO: refactoring with optimistic locking (avoid race condition)
+
         $contract = Contract::create($request->all());
 
         return (new ContractResource($contract))

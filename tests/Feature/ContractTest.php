@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Contract;
+use App\Property;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -143,6 +144,27 @@ class ContractTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['property_id' => 'The selected property id is invalid.']);
+
+        $this->assertDatabaseMissing($contract->getTable(), $data);
+    }
+
+    /**
+     * @return void
+     */
+    public function testStoreFailPropertyAlreadyHasContract()
+    {
+        $property = factory(Property::class)->create();
+
+        factory(Contract::class)->create(['property_id' => $property->id]);
+
+        $contract = factory(Contract::class)->make(['property_id' => $property->id]);
+
+        $response = $this->json('POST', '/api/contracts', $contract->toArray());
+
+        $data = Arr::except($contract->toArray(), ['property_id', 'type_id']);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['property_id' => 'The selected property id already has a contract.']);
 
         $this->assertDatabaseMissing($contract->getTable(), $data);
     }
