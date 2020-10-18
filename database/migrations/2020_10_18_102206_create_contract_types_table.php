@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDocumentTypesTable extends Migration
+class CreateContractTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateDocumentTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('document_types', function (Blueprint $table) {
+        Schema::create('contract_types', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('format')->nullable();
+            $table->string('document_name');
+            $table->string('document_format');
 
             $table->unsignedBigInteger('country_id');
             $table->foreign('country_id')->references('id')->on('countries');
@@ -32,6 +33,6 @@ class CreateDocumentTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('document_types');
+        Schema::dropIfExists('contract_types');
     }
 }

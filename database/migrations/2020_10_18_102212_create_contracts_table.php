@@ -19,8 +19,8 @@ class CreateContractsTable extends Migration
             $table->string('document');
             $table->string('email');
 
-            $table->unsignedBigInteger('document_type_id');
-            $table->foreign('document_type_id')->references('id')->on('document_types');
+            $table->unsignedBigInteger('type_id');
+            $table->foreign('type_id')->references('id')->on('contract_types');
 
             $table->unsignedBigInteger('property_id');
             $table->foreign('property_id')->references('id')->on('properties');

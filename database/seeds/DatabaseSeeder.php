@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
          $this->call(CountriesTableSeeder::class);
          $this->call(StatesTableSeeder::class);
          $this->call(CitiesTableSeeder::class);
-         $this->call(DocumentTypesTableSeeder::class);
+         $this->call(ContractTypesTableSeeder::class);
     }
 }

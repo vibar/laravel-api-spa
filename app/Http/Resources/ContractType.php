@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DocumentType extends JsonResource
+class ContractType extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,7 +17,8 @@ class DocumentType extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'format' => $this->format,
+            'document_name' => $this->document_name,
+            'document_format' => $this->document_format,
             'country' => new Country($this->whenLoaded('country')),
         ];
     }

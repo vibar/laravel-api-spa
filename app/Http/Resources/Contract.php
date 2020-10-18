@@ -21,7 +21,7 @@ class Contract extends JsonResource
             'email' => $this->email,
             'created_at' => (string) $this->created_at,
             'updated_at' => (string) $this->updated_at,
-            'document_type' => new DocumentType($this->whenLoaded('documentType')),
+            'type' => new ContractType($this->whenLoaded('type')),
             'property' => new Property($this->whenLoaded('property')),
         ];
     }

@@ -31,7 +31,7 @@ class PropertyTest extends TestCase
     /**
      * @return void
      */
-    public function testStore()
+    public function testStoreSuccess()
     {
         $property = factory(Property::class)->make();
 
@@ -41,112 +41,135 @@ class PropertyTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJson(compact('data'));
+
+        $this->assertDatabaseHas($property->getTable(), $data);
     }
 
     /**
      * @return void
      */
-    public function testStoreWithoutNumber()
+    public function testStoreSuccessWithoutNumber()
     {
         $property = factory(Property::class)->make(['number' => '']);
 
         $response = $this->json('POST', '/api/properties', $property->toArray());
 
         $data = Arr::except($property->toArray(), ['city_id']);
+        $data['number'] = null;
 
         $response->assertStatus(201)
             ->assertJson(compact('data'));
+
+        $this->assertDatabaseHas($property->getTable(), $data);
     }
 
     /**
      * @return void
      */
-    public function testStoreWithoutComplement()
+    public function testStoreSuccessWithoutComplement()
     {
         $property = factory(Property::class)->make(['complement' => '']);
 
         $response = $this->json('POST', '/api/properties', $property->toArray());
 
         $data = Arr::except($property->toArray(), ['city_id']);
+        $data['complement'] = null;
 
         $response->assertStatus(201)
             ->assertJson(compact('data'));
+
+        $this->assertDatabaseHas($property->getTable(), $data);
     }
 
     /**
      * @return void
      */
-    public function testValidateEmail()
+    public function testStoreFailWithoutEmail()
     {
         $property = factory(Property::class)->make(['email' => '']);
 
         $response = $this->json('POST', '/api/properties', $property->toArray());
 
+        $data = Arr::except($property->toArray(), ['city_id']);
+
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['email' => 'The email field is required.'])
-        ;
+            ->assertJsonValidationErrors(['email' => 'The email field is required.']);
+
+        $this->assertDatabaseMissing($property->getTable(), $data);
     }
 
     /**
      * @return void
      */
-    public function testValidateStreet()
+    public function testStoreFailWithoutStreet()
     {
         $property = factory(Property::class)->make(['street' => '']);
 
         $response = $this->json('POST', '/api/properties', $property->toArray());
 
+        $data = Arr::except($property->toArray(), ['city_id']);
+
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['street' => 'The street field is required.'])
-        ;
+            ->assertJsonValidationErrors(['street' => 'The street field is required.']);
+
+        $this->assertDatabaseMissing($property->getTable(), $data);
     }
 
     /**
      * @return void
      */
-    public function testValidateDistrict()
+    public function testStoreFailWithoutDistrict()
     {
         $property = factory(Property::class)->make(['district' => '']);
 
         $response = $this->json('POST', '/api/properties', $property->toArray());
 
+        $data = Arr::except($property->toArray(), ['city_id']);
+
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['district' => 'The district field is required.'])
-        ;
+            ->assertJsonValidationErrors(['district' => 'The district field is required.']);
+
+        $this->assertDatabaseMissing($property->getTable(), $data);
     }
 
     /**
      * @return void
      */
-    public function testValidateCity()
+    public function testStoreFailWithoutCity()
     {
         $property = factory(Property::class)->make(['city_id' => '']);
 
         $response = $this->json('POST', '/api/properties', $property->toArray());
 
+        $data = Arr::except($property->toArray(), ['city_id']);
+
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['city_id' => 'The city id field is required.'])
-        ;
+            ->assertJsonValidationErrors(['city_id' => 'The city id field is required.']);
+
+        $this->assertDatabaseMissing($property->getTable(), $data);
     }
 
     /**
      * @return void
      */
-    public function testValidateInvalidCity()
+    public function testStoreFailWithInvalidCity()
     {
         $property = factory(Property::class)->make(['city_id' => 10]);
 
         $response = $this->json('POST', '/api/properties', $property->toArray());
 
+        $data = Arr::except($property->toArray(), ['city_id']);
+
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['city_id' => 'The selected city id is invalid.'])
-        ;
+            ->assertJsonValidationErrors(['city_id' => 'The selected city id is invalid.']);
+
+        $this->assertDatabaseMissing($property->getTable(), $data);
     }
 
     /**
      * @return void
      */
-    public function testDestroy()
+    public function testDestroySuccess()
     {
         $property = factory(Property::class)->create();
 
@@ -158,5 +181,21 @@ class PropertyTest extends TestCase
             ->assertJson(compact('data'));
 
         $this->assertSoftDeleted($property->getTable(), $data);
+    }
+
+    /**
+     * @return void
+     */
+    public function testDestroyFailNotFound()
+    {
+        $property = factory(Property::class)->create();
+
+        $response = $this->json('DELETE', '/api/properties/100');
+
+        $data = Arr::except($property->toArray(), ['city_id']);
+
+        $response->assertStatus(404);
+
+        $this->assertDatabaseHas($property->getTable(), $data);
     }
 }
