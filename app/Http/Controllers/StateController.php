@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-
-class CityController extends Controller
+class StateController extends Controller
 {
     /**
      * Display a listing of the resource.
