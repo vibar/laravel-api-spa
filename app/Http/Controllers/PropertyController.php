@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PropertyStoreRequest;
+use App\Http\Resources\Property as PropertyResource;
 use App\Property;
 use Illuminate\Http\Request;
 
@@ -20,12 +22,16 @@ class PropertyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param PropertyStoreRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(PropertyStoreRequest $request)
     {
-        //
+        $property = Property::create($request->all());
+
+        return (new PropertyResource($property))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**

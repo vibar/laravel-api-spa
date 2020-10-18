@@ -13,6 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::resource('countries', 'CountryController')->only('index');
-Route::resource('states', 'StateController')->only('index');
-Route::resource('cities', 'CityController')->only('index');
+Route::apiResource('countries', 'CountryController')
+    ->only('index');
+
+Route::apiResource('states', 'StateController')
+    ->only('index');
+
+Route::apiResource('cities', 'CityController')
+    ->only('index');
+
+Route::apiResource('properties', 'PropertyController')
+    ->only('store');
