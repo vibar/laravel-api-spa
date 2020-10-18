@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Contract;
+use App\ContractType;
 use App\Property;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
@@ -146,6 +147,88 @@ class ContractTest extends TestCase
             ->assertJsonValidationErrors(['property_id' => 'The selected property id is invalid.']);
 
         $this->assertDatabaseMissing($contract->getTable(), $data);
+    }
+
+    /**
+     * @return void
+     */
+    public function testStoreFailWithInvalidDocumentCPF()
+    {
+        $type = factory(ContractType::class)->create(['document_validator' => 'cpf']);
+
+        $contract = factory(Contract::class)->make(['type_id' => $type->id]);
+
+        $response = $this->json('POST', '/api/contracts', $contract->toArray());
+
+        $data = Arr::except($contract->toArray(), ['property_id', 'type_id']);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['document' => 'The selected document is invalid.']);
+
+        $this->assertDatabaseMissing($contract->getTable(), $data);
+    }
+
+    /**
+     * @return void
+     */
+    public function testStoreFailWithInvalidDocumentCNPJ()
+    {
+        $type = factory(ContractType::class)->create(['document_validator' => 'cnpj']);
+
+        $contract = factory(Contract::class)->make(['type_id' => $type->id]);
+
+        $response = $this->json('POST', '/api/contracts', $contract->toArray());
+
+        $data = Arr::except($contract->toArray(), ['property_id', 'type_id']);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['document' => 'The selected document is invalid.']);
+
+        $this->assertDatabaseMissing($contract->getTable(), $data);
+    }
+
+    /**
+     * @return void
+     */
+    public function testStoreSuccessWithValidDocumentCPF()
+    {
+        $type = factory(ContractType::class)->create(['document_validator' => 'cpf']);
+
+        $contract = factory(Contract::class)->make([
+            'type_id' => $type->id,
+            'document' => '205.324.587-53',
+        ]);
+
+        $response = $this->json('POST', '/api/contracts', $contract->toArray());
+
+        $data = Arr::except($contract->toArray(), ['property_id', 'type_id']);
+
+        $response->assertStatus(201)
+            ->assertJson(compact('data'));
+
+        $this->assertDatabaseHas($contract->getTable(), $data);
+    }
+
+    /**
+     * @return void
+     */
+    public function testStoreSuccessWithValidDocumentCNPJ()
+    {
+        $type = factory(ContractType::class)->create(['document_validator' => 'cnpj']);
+
+        $contract = factory(Contract::class)->make([
+            'type_id' => $type->id,
+            'document' => '06.610.500/0001-21',
+        ]);
+
+        $response = $this->json('POST', '/api/contracts', $contract->toArray());
+
+        $data = Arr::except($contract->toArray(), ['property_id', 'type_id']);
+
+        $response->assertStatus(201)
+            ->assertJson(compact('data'));
+
+        $this->assertDatabaseHas($contract->getTable(), $data);
     }
 
     /**

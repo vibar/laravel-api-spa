@@ -12,6 +12,7 @@ $factory->define(ContractType::class, function (Faker $faker) {
         'name' => $faker->words(2, true),
         'document_name' => $faker->word,
         'document_format' => implode('', $faker->randomElements(['9'], 10, true)),
+        'document_validator' => null,
         'country_id' => function() {
             return factory(Country::class)->create()->id;
         },

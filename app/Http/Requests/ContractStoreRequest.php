@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\ContractType;
 use App\Property;
 use Illuminate\Foundation\Http\FormRequest;
+use Respect\Validation\Validator as RespectValidator;
 
 class ContractStoreRequest extends FormRequest
 {
@@ -42,6 +44,20 @@ class ContractStoreRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+
+            // TODO: refactoring
+
+            // Document validation
+            if ($typeId = $this->get('type_id')) {
+                $type = ContractType::find($typeId);
+                $document = $this->get('document');
+
+                if ($document && $type && $type->document_validator) {
+                    if (!RespectValidator::{$type->document_validator}()->validate($document)) {
+                        $validator->errors()->add('document', 'The selected document is invalid.');
+                    }
+                }
+            }
 
             // Property can only have one contract
             if ($propertyId = $this->get('property_id')) {

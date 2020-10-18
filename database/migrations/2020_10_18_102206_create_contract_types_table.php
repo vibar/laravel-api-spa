@@ -17,7 +17,8 @@ class CreateContractTypesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('document_name');
-            $table->string('document_format');
+            $table->string('document_format')->nullable();
+            $table->string('document_validator')->nullable();
 
             $table->unsignedBigInteger('country_id');
             $table->foreign('country_id')->references('id')->on('countries');
