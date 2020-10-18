@@ -13,7 +13,7 @@ class CountriesTableSeeder extends Seeder
     {
         \App\Country::query()->insert([
             'name' => 'Brasil',
-            'code' => 'br',
+            'code' => 'BR',
         ]);
     }
 }

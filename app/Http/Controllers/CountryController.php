@@ -14,7 +14,7 @@ class CountryController extends Controller
      */
     public function index()
     {
-        $countries = Country::get();
+        $countries = Country::orderBy('name')->get();
 
         return CountryResource::collection($countries);
     }

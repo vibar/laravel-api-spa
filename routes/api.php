@@ -14,5 +14,5 @@ use Illuminate\Http\Request;
 */
 
 Route::resource('countries', 'CountryController')->only('index');
-Route::resource('states', 'CountryController')->only('index');
-Route::resource('cities', 'CountryController')->only('index');
+Route::resource('states', 'StateController')->only('index');
+Route::resource('cities', 'CityController')->only('index');
