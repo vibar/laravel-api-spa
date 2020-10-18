@@ -20,4 +20,24 @@ class Property extends Model
         'district',
         'city_id',
     ];
+
+    /**
+     * City
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function city()
+    {
+        return $this->BelongsTo(City::class);
+    }
+
+    /**
+     * Contract
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function contract()
+    {
+        return $this->hasOne(Contract::class);
+    }
 }

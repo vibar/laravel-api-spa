@@ -12,11 +12,19 @@ class PropertyController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $orderColumn = $request->input('order.column', 'email');
+        $orderDirection = $request->input('order.direction', 'asc');
+
+        $properties = Property::with('contract', 'city.state.country')
+            ->orderBy($orderColumn, $orderDirection)
+            ->paginate();
+
+        return PropertyResource::collection($properties);
     }
 
     /**
@@ -61,10 +69,12 @@ class PropertyController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Property  $property
-     * @return \Illuminate\Http\Response
+     * @return PropertyResource
      */
     public function destroy(Property $property)
     {
-        //
+        $property->delete();
+
+        return new PropertyResource($property);
     }
 }

@@ -23,4 +23,4 @@ Route::apiResource('cities', 'CityController')
     ->only('index');
 
 Route::apiResource('properties', 'PropertyController')
-    ->only('store');
+    ->only('store', 'index', 'destroy');

@@ -14,6 +14,23 @@ class PropertyTest extends TestCase
     /**
      * @return void
      */
+    public function testIndex()
+    {
+        $properties = factory(Property::class, 10)->create();
+
+        $data = $properties->sortBy('email')->values()
+            ->map->only(['id', 'email' , 'street', 'number', 'complement', 'district'])
+            ->all();
+
+        $response = $this->json('GET', '/api/properties');
+
+        $response->assertStatus(200)
+            ->assertJson(compact('data'));
+    }
+
+    /**
+     * @return void
+     */
     public function testStore()
     {
         $property = factory(Property::class)->make();
@@ -124,5 +141,22 @@ class PropertyTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['city_id' => 'The selected city id is invalid.'])
         ;
+    }
+
+    /**
+     * @return void
+     */
+    public function testDestroy()
+    {
+        $property = factory(Property::class)->create();
+
+        $response = $this->json('DELETE', '/api/properties/'.$property->getRouteKey());
+
+        $data = Arr::except($property->toArray(), ['city_id']);
+
+        $response->assertStatus(200)
+            ->assertJson(compact('data'));
+
+        $this->assertSoftDeleted($property->getTable(), $data);
     }
 }

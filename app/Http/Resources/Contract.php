@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Property extends JsonResource
+class Contract extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,15 +16,13 @@ class Property extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
+            'document' => $this->document,
             'email' => $this->email,
-            'street' => $this->street,
-            'number' => $this->number,
-            'complement' => $this->complement,
-            'district' => $this->district,
             'created_at' => (string) $this->created_at,
             'updated_at' => (string) $this->updated_at,
-            'city' => new City($this->whenLoaded('city')),
-            'contract' => new Contract($this->whenLoaded('contract')),
+            'document_type' => new DocumentType($this->whenLoaded('documentType')),
+            'property' => new Property($this->whenLoaded('property')),
         ];
     }
 }
