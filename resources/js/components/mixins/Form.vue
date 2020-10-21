@@ -1,0 +1,97 @@
+<script>
+    export default {
+
+        data() {
+            return {
+                form: {},
+                error: {},
+            }
+        },
+
+        mounted() {
+            let vm = this
+            vm.$on('open', (form) => {
+                vm.reset()
+                if (form) {
+                    vm.form = form
+                }
+                $(vm.$el).modal('show')
+            })
+            vm.$on('close', () => {
+                $(vm.$el).modal('hide')
+            })
+        },
+
+        methods: {
+
+            reset() {
+                let vm = this
+                vm.form = {}
+                vm.$refs.form.classList.remove('was-validated')
+                vm.setError()
+            },
+
+            hasError(key) {
+                if (!this.error.errors) {
+                    return false
+                }
+                return !!this.error.errors[key]
+            },
+
+            getError(key) {
+                if (!this.error.errors) {
+                    return ''
+                }
+                return this.error.errors[key][0]
+            },
+
+            errorClass(key) {
+                if (!this.hasError(key)) {
+                    return ''
+                }
+                return 'is-invalid'
+            },
+
+            setError(error) {
+                let vm = this
+
+                if (!error) {
+                    vm.error = {
+                        errors: [],
+                        message: '',
+                    }
+                    return
+                }
+
+                if (!error.response) {
+                    vm.error = {
+                        errors: [],
+                        message: error.message,
+                    }
+                    return
+                }
+
+                if (error.response.status === 422) {
+                    let errors = error.response.data.errors
+                    if (errors.general && errors.general.length) {
+                        vm.error = {
+                            errors: [],
+                            message: errors.general[0],
+                        }
+                        return
+                    }
+                    vm.error = {
+                        errors: errors,
+                        message: '',
+                    }
+                    return
+                }
+
+                vm.error = {
+                    errors: [],
+                    message: error.response.data.message,
+                }
+            },
+        },
+    }
+</script>

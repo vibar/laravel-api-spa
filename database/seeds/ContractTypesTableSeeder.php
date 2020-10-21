@@ -12,14 +12,16 @@ class ContractTypesTableSeeder extends Seeder
     public function run()
     {
         $data = [[
-            'name' => 'Pessoa física',
+            'name' => 'Pessoa Física',
             'document_name' => 'CPF',
-            'document_format' => '999.999.999-99',
+            'document_format' => '\d{3}\.\d{3}\.\d{3}-\d{2}',
+            'document_validator' => 'cpf',
             'country_id' => 1,
         ], [
-            'name' => 'Pessoa jurídica',
+            'name' => 'Pessoa Jurídica',
             'document_name' => 'CNPJ',
-            'document_format' => '99.999.999/9999-99',
+            'document_format' => '\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}',
+            'document_validator' => 'cnpj',
             'country_id' => 1,
         ]];
 

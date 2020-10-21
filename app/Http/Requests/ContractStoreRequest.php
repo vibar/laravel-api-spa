@@ -30,8 +30,8 @@ class ContractStoreRequest extends FormRequest
             'name' => 'required',
             'document' => 'required',
             'email' => 'required|email',
-            'type_id' => 'required|exists:contract_types,id',
-            'property_id' => 'required|exists:properties,id',
+            'type_id' => 'required|numeric|exists:contract_types,id',
+            'property_id' => 'required|numeric|exists:properties,id',
         ];
     }
 

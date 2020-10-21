@@ -22,7 +22,9 @@ class PropertyController extends Controller
 
         $properties = Property::with('contract', 'city.state.country')
             ->orderBy($orderColumn, $orderDirection)
-            ->paginate();
+            ->get();
+
+        // TODO: paginate
 
         return PropertyResource::collection($properties);
     }

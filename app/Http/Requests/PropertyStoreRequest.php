@@ -27,7 +27,7 @@ class PropertyStoreRequest extends FormRequest
             'email' => 'required|email',
             'street' => 'required',
             'district' => 'required',
-            'city_id' => 'required|exists:cities,id',
+            'city_id' => 'required|numeric|exists:cities,id',
         ];
     }
 }

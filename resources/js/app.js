@@ -4,9 +4,90 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+require('./bootstrap')
 
-window.Vue = require('vue');
+window.Vue = require('vue')
+
+import VueTheMask from 'vue-the-mask'
+Vue.use(VueTheMask)
+
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const store = new Vuex.Store({
+    state: {
+        contractTypes: [],
+        properties: [],
+    },
+    getters: {
+        allContractTypes: state => {
+            return state.contractTypes
+        },
+        allProperties: state => {
+            return state.properties
+        },
+    },
+    mutations: {
+        SET_CONTRACT_TYPES (state, contractTypes) {
+            state.contractTypes = contractTypes
+        },
+        SET_PROPERTIES (state, properties) {
+            state.properties = properties
+        },
+    },
+    actions: {
+        fetchContractTypes ({ commit }) {
+            return new Promise((resolve, reject) => {
+                axios.get('/api/contracts/types')
+                    .then(response => {
+                        let data = response.data.data
+                        commit('SET_CONTRACT_TYPES', data)
+                        resolve(data)
+                    })
+                    .catch(error => reject(error))
+            })
+        },
+        fetchProperties ({ commit }) {
+            return new Promise((resolve, reject) => {
+                axios.get('/api/properties')
+                    .then(response => {
+                        let data = response.data.data
+                        commit('SET_PROPERTIES', data)
+                        resolve(data)
+                    })
+                    .catch(error => reject(error))
+            })
+        },
+        addProperty ({ commit, dispatch }, property) {
+            return new Promise((resolve, reject) => {
+                axios.post('/api/properties', property)
+                    .then(response => {
+                        resolve(dispatch('fetchProperties'))
+                    })
+                    .catch(error => reject(error))
+            })
+        },
+        removeProperty ({ commit, dispatch }, property) {
+            return new Promise((resolve, reject) => {
+                axios.delete('/api/properties/' + property.id)
+                    .then(response => {
+                        resolve(dispatch('fetchProperties'))
+                    })
+                    .catch(error => reject(error))
+            })
+        },
+        addContract ({ commit, dispatch }, contract) {
+            return new Promise((resolve, reject) => {
+                axios.post('/api/contracts', contract)
+                    .then(response => {
+                        resolve(dispatch('fetchProperties'))
+                    })
+                    .catch(error => reject(error))
+            })
+        }
+    }
+})
 
 /**
  * The following block of code may be used to automatically register your
@@ -19,7 +100,11 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('property-list', require('./components/PropertyList').default)
+Vue.component('property-form', require('./components/PropertyForm').default)
+Vue.component('contract-form', require('./components/ContractForm').default)
+Vue.component('modal', require('./components/Modal').default)
+Vue.component('Form', require('./components/mixins/Form').default)
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -29,4 +114,13 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
-});
+    store,
+    computed: {
+        properties() {
+            return this.$store.getters.allProperties
+        },
+    },
+    created() {
+        this.$store.dispatch('fetchProperties')
+    },
+})
