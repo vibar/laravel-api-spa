@@ -48,9 +48,9 @@ const store = new Vuex.Store({
                     .catch(error => reject(error))
             })
         },
-        fetchProperties ({ commit }) {
+        fetchProperties ({ commit }, params) {
             return new Promise((resolve, reject) => {
-                axios.get('/api/properties')
+                axios.get('/api/properties?' + $.param(params))
                     .then(response => {
                         let data = response.data.data
                         commit('SET_PROPERTIES', data)

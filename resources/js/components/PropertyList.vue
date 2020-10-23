@@ -3,9 +3,19 @@
         <table v-if="properties.length" class="table table-condensed table-hover">
             <thead>
                 <tr>
-                    <td v-for="column in columns" class="border-top-0 font-weight-bold">
-                        <a @click="orderBy(column)" href="">
-                            {{ getLabel(column) }}
+                    <td class="border-top-0 font-weight-bold">
+                        <a href="#" @click="orderBy('email')">
+                            Nome
+                        </a>
+                    </td>
+                    <td class="border-top-0 font-weight-bold">
+                        <a href="#" @click="orderBy('street')">
+                            Endereço
+                        </a>
+                    </td>
+                    <td class="border-top-0 font-weight-bold">
+                        <a href="#">
+                            Status
                         </a>
                     </td>
                 </tr>
@@ -47,18 +57,24 @@
 
     export default {
 
-        props: {
-            columns: {
-                type: Array,
-                default: () => {
-                    return ['email', 'address', 'status']
+        data() {
+            return {
+                order: {
+                    column: 'email',
+                    direction: 'asc',
                 },
-            },
+            }
         },
 
         computed: {
             properties() {
-                return this.$store.getters.allProperties
+                let properties = this.$store.getters.allProperties
+                return properties.map(p => ({
+                    ...p,
+                    address: [p.street, p.number, p.city.name, p.city.state.name].filter(str => {
+                        return str
+                    }).join(', ')
+                }))
             },
         },
 
@@ -93,8 +109,11 @@
                 }
             },
 
-            orderBy(field) {
-                alert('order by ' + field)
+            orderBy(column) {
+                let vm = this
+                vm.order.column = column
+                vm.order.direction = vm.order.direction === 'asc' ? 'desc' : 'asc'
+                this.$store.dispatch('fetchProperties', {'order': vm.order})
             },
         },
     }

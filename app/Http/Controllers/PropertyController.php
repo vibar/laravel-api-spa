@@ -17,12 +17,11 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
-        $orderColumn = $request->input('order.column', 'email');
-        $orderDirection = $request->input('order.direction', 'asc');
-
         $properties = Property::with('contract', 'city.state.country')
-            ->orderBy($orderColumn, $orderDirection)
-            ->get();
+            ->orderBy(
+                $request->input('order.column', 'email'),
+                $request->input('order.direction', 'asc')
+            )->get();
 
         // TODO: paginate
 

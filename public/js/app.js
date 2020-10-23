@@ -2262,6 +2262,22 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2308,17 +2324,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    columns: {
-      type: Array,
-      "default": function _default() {
-        return ['email', 'address', 'status'];
+  data: function data() {
+    return {
+      order: {
+        column: 'email',
+        direction: 'asc'
       }
-    }
+    };
   },
   computed: {
     properties: function properties() {
-      return this.$store.getters.allProperties;
+      var properties = this.$store.getters.allProperties;
+      return properties.map(function (p) {
+        return _objectSpread(_objectSpread({}, p), {}, {
+          address: [p.street, p.number, p.city.name, p.city.state.name].filter(function (str) {
+            return str;
+          }).join(', ')
+        });
+      });
     }
   },
   methods: {
@@ -2353,8 +2376,13 @@ __webpack_require__.r(__webpack_exports__);
           return '';
       }
     },
-    orderBy: function orderBy(field) {
-      alert('order by ' + field);
+    orderBy: function orderBy(column) {
+      var vm = this;
+      vm.order.column = column;
+      vm.order.direction = vm.order.direction === 'asc' ? 'desc' : 'asc';
+      this.$store.dispatch('fetchProperties', {
+        'order': vm.order
+      });
     }
   }
 });
@@ -39038,36 +39066,47 @@ var render = function() {
       _vm.properties.length
         ? _c("table", { staticClass: "table table-condensed table-hover" }, [
             _c("thead", [
-              _c(
-                "tr",
-                _vm._l(_vm.columns, function(column) {
-                  return _c(
-                    "td",
-                    { staticClass: "border-top-0 font-weight-bold" },
+              _c("tr", [
+                _c("td", { staticClass: "border-top-0 font-weight-bold" }, [
+                  _c(
+                    "a",
+                    {
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          return _vm.orderBy("email")
+                        }
+                      }
+                    },
                     [
-                      _c(
-                        "a",
-                        {
-                          attrs: { href: "" },
-                          on: {
-                            click: function($event) {
-                              return _vm.orderBy(column)
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                        " +
-                              _vm._s(_vm.getLabel(column)) +
-                              "\n                    "
-                          )
-                        ]
+                      _vm._v(
+                        "\n                        Nome\n                    "
                       )
                     ]
                   )
-                }),
-                0
-              )
+                ]),
+                _vm._v(" "),
+                _c("td", { staticClass: "border-top-0 font-weight-bold" }, [
+                  _c(
+                    "a",
+                    {
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          return _vm.orderBy("street")
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                        Endereço\n                    "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _vm._m(0)
+              ])
             ]),
             _vm._v(" "),
             _c(
@@ -39147,7 +39186,18 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", { staticClass: "border-top-0 font-weight-bold" }, [
+      _c("a", { attrs: { href: "#" } }, [
+        _vm._v("\n                        Status\n                    ")
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -52646,10 +52696,10 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
       });
     },
-    fetchProperties: function fetchProperties(_ref2) {
+    fetchProperties: function fetchProperties(_ref2, params) {
       var commit = _ref2.commit;
       return new Promise(function (resolve, reject) {
-        axios.get('/api/properties').then(function (response) {
+        axios.get('/api/properties?' + $.param(params)).then(function (response) {
           var data = response.data.data;
           commit('SET_PROPERTIES', data);
           resolve(data);
