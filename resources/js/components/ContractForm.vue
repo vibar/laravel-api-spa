@@ -36,7 +36,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>{{ $tc('contract.document') }} <span class="text-danger">*</span></label>
+                            <label>{{ documentName }} <span class="text-danger">*</span></label>
                             <input v-model="form.document" v-mask="documentMask" :pattern="documentRegex" required type="text" :class="`form-control ${errorClass('document')}`">
                             <div v-if="hasError('document')" class="invalid-feedback">
                                 {{ getError('document') }}
@@ -107,6 +107,12 @@
             types() {
                 return this.$store.getters.allContractTypes
             },
+            documentName() {
+                if (!this.form.type_id) {
+                    return this.$t('contract.document')
+                }
+                return this.types.find(type => type.id === this.form.type_id).document_name
+            },
             documentRegex() {
                 if (!this.form.type_id) {
                     return ''
@@ -130,18 +136,21 @@
         methods: {
 
             fill(property) {
+                let form = {}
+                if (this.types.length) {
+                    form.type_id = this.types[0].id
+                }
                 if (!property) {
-                    return {}
+                    return form
                 }
-                let contract = property.contract
-                if (!contract) {
-                    return {
-                        property_id: property.id,
-                    }
+                if (!property.contract) {
+                    form.property_id = property.id
+                    return form
                 }
-                contract.property_id = property.id
-                contract.type_id = contract.type.id
-                return contract
+                form = property.contract
+                form.property_id = property.id
+                form.type_id = property.contract.type.id
+                return form
             },
 
             submit() {
