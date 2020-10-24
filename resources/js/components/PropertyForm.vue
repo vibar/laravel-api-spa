@@ -25,26 +25,30 @@
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label>Estado <span class="text-danger">*</span></label>
-                                    <select v-model="form.state_id" required :class="`form-control ${errorClass('state_id')}`">
-                                        <option v-for="state in states" :value="state.id">{{ state.name }}</option>
-                                    </select>
-                                    <div v-if="hasError('state_id')" class="invalid-feedback">
-                                        {{ getError('state_id') }}
+                                    <label>Rua <span class="text-danger">*</span></label>
+                                    <input type="text" v-model="form.street" required :class="`form-control ${errorClass('street')}`">
+                                    <div v-if="hasError('street')" class="invalid-feedback">
+                                        {{ getError('street') }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-3">
                                 <div class="form-group">
-                                    <label>Cidade <span class="text-danger">*</span></label>
-                                    <select v-model="form.city_id" required :class="`form-control ${errorClass('city_id')}`">
-                                        <option v-if="!form.state_id" value="">Selecione um estado</option>
-                                        <option v-for="city in cities" :value="city.id">{{ city.name }}</option>
-                                    </select>
-                                    <div v-if="hasError('city_id')" class="invalid-feedback">
-                                        {{ getError('city_id') }}
+                                    <label>Número</label>
+                                    <input type="text" v-model="form.number" :class="`form-control ${errorClass('number')}`">
+                                    <div v-if="hasError('number')" class="invalid-feedback">
+                                        {{ getError('number') }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label>Complemento</label>
+                                    <input type="text" v-model="form.complement" :class="`form-control ${errorClass('complement')}`">
+                                    <div v-if="hasError('complement')" class="invalid-feedback">
+                                        {{ getError('complement') }}
                                     </div>
                                 </div>
                             </div>
@@ -61,28 +65,24 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label>Rua <span class="text-danger">*</span></label>
-                                    <input type="text" v-model="form.street" required :class="`form-control ${errorClass('street')}`">
-                                    <div v-if="hasError('street')" class="invalid-feedback">
-                                        {{ getError('street') }}
+                                    <label>Estado <span class="text-danger">*</span></label>
+                                    <select v-model="form.state_id" required :class="`form-control ${errorClass('state_id')}`">
+                                        <option v-for="state in states" :value="state.id">{{ state.name }}</option>
+                                    </select>
+                                    <div v-if="hasError('state_id')" class="invalid-feedback">
+                                        {{ getError('state_id') }}
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-6">
                                 <div class="form-group">
-                                    <label>Número</label>
-                                    <input type="text" v-model="form.number" :class="`form-control ${errorClass('number')}`">
-                                    <div v-if="hasError('number')" class="invalid-feedback">
-                                        {{ getError('number') }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="form-group">
-                                    <label>Complemento</label>
-                                    <input type="text" v-model="form.complement" :class="`form-control ${errorClass('complement')}`">
-                                    <div v-if="hasError('complement')" class="invalid-feedback">
-                                        {{ getError('complement') }}
+                                    <label>Cidade <span class="text-danger">*</span></label>
+                                    <select v-model="form.city_id" required :class="`form-control ${errorClass('city_id')}`">
+                                        <option v-if="!form.state_id" value="">Selecione um estado</option>
+                                        <option v-for="city in cities" :value="city.id">{{ city.name }}</option>
+                                    </select>
+                                    <div v-if="hasError('city_id')" class="invalid-feedback">
+                                        {{ getError('city_id') }}
                                     </div>
                                 </div>
                             </div>

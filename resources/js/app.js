@@ -35,6 +35,9 @@ const store = new Vuex.Store({
         allProperties: state => {
             return state.properties
         },
+        propertiesWithoutContract: state => {
+            return state.properties.filter(property => !property.contract)
+        },
     },
     mutations: {
         SET_STATES (state, states) {
@@ -155,11 +158,8 @@ const app = new Vue({
     el: '#app',
     store,
     computed: {
-        properties() {
-            return this.$store.getters.allProperties
+        addContractEnabled() {
+            return this.$store.getters.propertiesWithoutContract.length > 0
         },
-    },
-    created() {
-        this.$store.dispatch('fetchProperties')
     },
 })

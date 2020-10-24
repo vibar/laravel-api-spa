@@ -40,4 +40,12 @@ class Property extends Model
     {
         return $this->hasOne(Contract::class);
     }
+
+    /**
+     * @param string $value
+     */
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = strtolower($value);
+    }
 }

@@ -23,4 +23,12 @@ class Contract extends Model
     {
         return $this->belongsTo(ContractType::class);
     }
+
+    /**
+     * @param string $value
+     */
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = strtolower($value);
+    }
 }

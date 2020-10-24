@@ -4,17 +4,17 @@
             <thead>
                 <tr>
                     <td class="border-top-0 font-weight-bold">
-                        <a href="#" @click="orderBy('email')">
+                        <a href="javascript:;" @click="orderBy('email')">
                             Nome
                         </a>
                     </td>
                     <td class="border-top-0 font-weight-bold">
-                        <a href="#" @click="orderBy('street')">
+                        <a href="javascript:;" @click="orderBy('street')">
                             Endereço
                         </a>
                     </td>
                     <td class="border-top-0 font-weight-bold">
-                        <a href="#">
+                        <a href="javascript:;">
                             Status
                         </a>
                     </td>
@@ -25,12 +25,12 @@
                     <td>{{ property.email }}</td>
                     <td>{{ property.address }}</td>
                     <td>
-                        <a href="#" @click="contract(property)" :class="`badge badge-${property.contract ? 'success' : 'danger'} p-2`">
+                        <a href="javascript:;" @click="contract(property)" :class="`badge badge-${property.contract ? 'success' : 'danger'} p-2`">
                             {{ property.contract ? 'CONTRATADO' : 'NÃO CONTRATADO' }}
                         </a>
                     </td>
                     <td>
-                        <a href="#" @click="remove(property)" class="close btn btn-sm btn-secondary text-white">
+                        <a href="javascript:;" @click="remove(property)" class="close btn btn-sm btn-secondary text-white">
                             <span>&times;</span>
                         </a>
                     </td>
@@ -66,9 +66,14 @@
             }
         },
 
+        created() {
+            this.$store.dispatch('fetchProperties')
+        },
+
         computed: {
             properties() {
-                return this.$store.getters.allProperties.map(property => ({
+                let properties = this.$store.getters.allProperties
+                return properties.map(property => ({
                     ...property,
                     address: [
                         property.street,
@@ -77,7 +82,7 @@
                         property.city.state.name
                     ].filter(value => {
                         return !!value
-                    }).join(', ')
+                    }).join(', ').toUpperCase()
                 }))
             },
         },
@@ -91,7 +96,7 @@
 
             remove(property) {
                 let vm = this
-                vm.$refs.removeConfirm.$emit('open', property.email, property)
+                vm.$refs.removeConfirm.$emit('open', property.address, property)
             },
 
             removeProperty(property) {

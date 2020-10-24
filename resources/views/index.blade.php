@@ -14,7 +14,7 @@
                         <a class="dropdown-item" href="#" @click="$refs.propertyForm.$emit('open')">
                             Propriedade
                         </a>
-                        <a v-if="properties.length" class="dropdown-item" href="#" @click="$refs.contractForm.$emit('open')">
+                        <a v-if="addContractEnabled" class="dropdown-item" href="#" @click="$refs.contractForm.$emit('open')">
                             Contrato
                         </a>
                     </div>

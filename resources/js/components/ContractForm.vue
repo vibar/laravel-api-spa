@@ -16,7 +16,9 @@
                         <div class="form-group">
                             <label>Propriedade <span class="text-danger">*</span></label>
                             <select v-model="form.property_id" required :class="`form-control ${errorClass('property_id')}`">
-                                <option value="1">Propriedade</option>
+                                <option v-for="property in properties" :value="property.id">
+                                    {{ property.address }}
+                                </option>
                             </select>
                             <div v-if="hasError('property_id')" class="invalid-feedback">
                                 {{ getError('property_id') }}
@@ -78,6 +80,22 @@
         },
 
         computed: {
+            properties() {
+                let properties = this.$store.getters.propertiesWithoutContract
+                return properties.map(property => ({
+                    ...property,
+                    address: [
+                        property.street,
+                        property.number,
+                        property.complement,
+                        property.district
+                    ].filter(value => {
+                        return !!value
+                    }).join(', ').toUpperCase()
+                })).sort(function (a, b) {
+                    return a.address < b.address ? -1 : 1
+                })
+            },
             types() {
                 return this.$store.getters.allContractTypes
             },
