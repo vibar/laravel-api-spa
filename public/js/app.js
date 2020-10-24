@@ -2020,15 +2020,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     types: function types() {
       return this.$store.getters.allContractTypes;
     },
-    documentRegex: function documentRegex() {
+    documentName: function documentName() {
       var _this = this;
+
+      if (!this.form.type_id) {
+        return this.$t('contract.document');
+      }
+
+      return this.types.find(function (type) {
+        return type.id === _this.form.type_id;
+      }).document_name;
+    },
+    documentRegex: function documentRegex() {
+      var _this2 = this;
 
       if (!this.form.type_id) {
         return '';
       }
 
       return this.types.find(function (type) {
-        return type.id === _this.form.type_id;
+        return type.id === _this2.form.type_id;
       }).document_format;
     },
     documentMask: function documentMask() {
@@ -2043,21 +2054,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: {
     fill: function fill(property) {
+      var form = {};
+
+      if (this.types.length) {
+        form.type_id = this.types[0].id;
+      }
+
       if (!property) {
-        return {};
+        return form;
       }
 
-      var contract = property.contract;
-
-      if (!contract) {
-        return {
-          property_id: property.id
-        };
+      if (!property.contract) {
+        form.property_id = property.id;
+        return form;
       }
 
-      contract.property_id = property.id;
-      contract.type_id = contract.type.id;
-      return contract;
+      form = property.contract;
+      form.property_id = property.id;
+      form.type_id = property.contract.type.id;
+      return form;
     },
     submit: function submit() {
       var vm = this;
@@ -40537,7 +40552,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
                   _c("label", [
-                    _vm._v(_vm._s(_vm.$tc("contract.document")) + " "),
+                    _vm._v(_vm._s(_vm.documentName) + " "),
                     _c("span", { staticClass: "text-danger" }, [_vm._v("*")])
                   ]),
                   _vm._v(" "),
@@ -54957,12 +54972,10 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue_the_mask__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-the-mask */ "./node_modules/vue-the-mask/dist/vue-the-mask.js");
-/* harmony import */ var vue_the_mask__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_the_mask__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-/* harmony import */ var vue_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-i18n */ "./node_modules/vue-i18n/dist/vue-i18n.esm.js");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
+/* harmony import */ var _locale__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./locale */ "./resources/js/locale.js");
+/* harmony import */ var vue_the_mask__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-the-mask */ "./node_modules/vue-the-mask/dist/vue-the-mask.js");
+/* harmony import */ var vue_the_mask__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_the_mask__WEBPACK_IMPORTED_MODULE_2__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -54972,154 +54985,9 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
-Vue.use(vue_the_mask__WEBPACK_IMPORTED_MODULE_0___default.a);
-
-Vue.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
-var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
-  state: {
-    locale: 'pt-br',
-    states: [],
-    cities: [],
-    contractTypes: [],
-    properties: []
-  },
-  getters: {
-    allStates: function allStates(state) {
-      return state.states;
-    },
-    allCities: function allCities(state) {
-      return state.cities;
-    },
-    allContractTypes: function allContractTypes(state) {
-      return state.contractTypes;
-    },
-    allProperties: function allProperties(state) {
-      return state.properties;
-    },
-    propertiesWithoutContract: function propertiesWithoutContract(state) {
-      return state.properties.filter(function (property) {
-        return !property.contract;
-      });
-    }
-  },
-  mutations: {
-    SET_STATES: function SET_STATES(state, states) {
-      state.states = states;
-    },
-    SET_CITIES: function SET_CITIES(state, cities) {
-      state.cities = cities;
-    },
-    SET_CONTRACT_TYPES: function SET_CONTRACT_TYPES(state, contractTypes) {
-      state.contractTypes = contractTypes;
-    },
-    SET_PROPERTIES: function SET_PROPERTIES(state, properties) {
-      state.properties = properties;
-    }
-  },
-  actions: {
-    fetchStates: function fetchStates(_ref, country) {
-      var commit = _ref.commit;
-      // TODO: cache
-      var defaultCountryId = 1;
-      var params = {
-        country_id: country ? country.id : defaultCountryId
-      };
-      return new Promise(function (resolve, reject) {
-        axios.get('/api/states?' + $.param(params)).then(function (response) {
-          var data = response.data.data;
-          commit('SET_STATES', data);
-          resolve(data);
-        })["catch"](function (error) {
-          return reject(error);
-        });
-      });
-    },
-    fetchCities: function fetchCities(_ref2, state) {
-      var commit = _ref2.commit;
-      // TODO: cache
-      var params = {
-        state_id: state.id
-      };
-      return new Promise(function (resolve, reject) {
-        axios.get('/api/cities?' + $.param(params)).then(function (response) {
-          var data = response.data.data;
-          commit('SET_CITIES', data);
-          resolve(data);
-        })["catch"](function (error) {
-          return reject(error);
-        });
-      });
-    },
-    fetchContractTypes: function fetchContractTypes(_ref3) {
-      var commit = _ref3.commit;
-      return new Promise(function (resolve, reject) {
-        axios.get('/api/contracts/types').then(function (response) {
-          var data = response.data.data;
-          commit('SET_CONTRACT_TYPES', data);
-          resolve(data);
-        })["catch"](function (error) {
-          return reject(error);
-        });
-      });
-    },
-    fetchProperties: function fetchProperties(_ref4, params) {
-      var commit = _ref4.commit;
-      return new Promise(function (resolve, reject) {
-        axios.get('/api/properties?' + $.param(params)).then(function (response) {
-          var data = response.data.data;
-          commit('SET_PROPERTIES', data);
-          resolve(data);
-        })["catch"](function (error) {
-          return reject(error);
-        });
-      });
-    },
-    addProperty: function addProperty(_ref5, property) {
-      var commit = _ref5.commit,
-          dispatch = _ref5.dispatch;
-      return new Promise(function (resolve, reject) {
-        axios.post('/api/properties', property).then(function (response) {
-          resolve(dispatch('fetchProperties'));
-        })["catch"](function (error) {
-          return reject(error);
-        });
-      });
-    },
-    removeProperty: function removeProperty(_ref6, property) {
-      var commit = _ref6.commit,
-          dispatch = _ref6.dispatch;
-      return new Promise(function (resolve, reject) {
-        axios["delete"]('/api/properties/' + property.id).then(function (response) {
-          resolve(dispatch('fetchProperties'));
-        })["catch"](function (error) {
-          return reject(error);
-        });
-      });
-    },
-    addContract: function addContract(_ref7, contract) {
-      var commit = _ref7.commit,
-          dispatch = _ref7.dispatch;
-      return new Promise(function (resolve, reject) {
-        axios.post('/api/contracts', contract).then(function (response) {
-          resolve(dispatch('fetchProperties'));
-        })["catch"](function (error) {
-          return reject(error);
-        });
-      });
-    }
-  }
-});
-
-Vue.use(vue_i18n__WEBPACK_IMPORTED_MODULE_2__["default"]);
-var locale = 'pt-br'; // Ready translated locale messages
-
-var messages = _defineProperty({}, locale, __webpack_require__("./resources/js/messages sync recursive ^\\.\\/.*$")("./" + locale)["default"]); // Create VueI18n instance with options
 
 
-var i18n = new vue_i18n__WEBPACK_IMPORTED_MODULE_2__["default"]({
-  locale: locale,
-  messages: messages
-});
+Vue.use(vue_the_mask__WEBPACK_IMPORTED_MODULE_2___default.a);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -55142,12 +55010,12 @@ Vue.component('Form', __webpack_require__(/*! ./components/mixins/Form */ "./res
  */
 
 var app = new Vue({
-  i18n: i18n,
+  i18n: _locale__WEBPACK_IMPORTED_MODULE_1__["default"],
   el: '#app',
-  store: store,
+  store: _store__WEBPACK_IMPORTED_MODULE_0__["default"],
   computed: {
     addContractEnabled: function addContractEnabled() {
-      return this.$store.getters.propertiesWithoutContract.length > 0;
+      return this.$store.getters.addContractEnabled;
     }
   }
 });
@@ -55525,6 +55393,38 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/locale.js":
+/*!********************************!*\
+  !*** ./resources/js/locale.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-i18n */ "./node_modules/vue-i18n/dist/vue-i18n.esm.js");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_i18n__WEBPACK_IMPORTED_MODULE_1__["default"]);
+var locale = _store__WEBPACK_IMPORTED_MODULE_2__["default"].getters.currentLocale; // Ready translated locale messages
+
+var messages = _defineProperty({}, locale, __webpack_require__("./resources/js/messages sync recursive ^\\.\\/.*$")("./" + locale)["default"]); // Create VueI18n instance with options
+
+
+var i18n = new vue_i18n__WEBPACK_IMPORTED_MODULE_1__["default"]({
+  locale: locale,
+  messages: messages
+});
+/* harmony default export */ __webpack_exports__["default"] = (i18n);
+
+/***/ }),
+
 /***/ "./resources/js/messages sync recursive ^\\.\\/.*$":
 /*!*********************************************!*\
   !*** ./resources/js/messages sync ^\.\/.*$ ***!
@@ -55604,6 +55504,275 @@ __webpack_require__.r(__webpack_exports__);
     label: '| Cidade | Cidades'
   }
 });
+
+/***/ }),
+
+/***/ "./resources/js/services.js":
+/*!**********************************!*\
+  !*** ./resources/js/services.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+ // create an axios instance with default options
+
+var http = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
+  baseURL: '/api',
+  paramsSerializer: function paramsSerializer(params) {
+    // TODO: serializer without jquery
+    return $.param(params);
+  }
+});
+var api = {};
+api.states = {
+  index: function index(params) {
+    // TODO: cache
+    return new Promise(function (resolve, reject) {
+      http.get('states', {
+        params: params
+      }).then(function (response) {
+        return resolve(response.data.data);
+      })["catch"](function (error) {
+        return reject(error);
+      });
+    });
+  }
+};
+api.cities = {
+  index: function index(params) {
+    // TODO: cache
+    return new Promise(function (resolve, reject) {
+      http.get('cities', {
+        params: params
+      }).then(function (response) {
+        return resolve(response.data.data);
+      })["catch"](function (error) {
+        return reject(error);
+      });
+    });
+  }
+};
+api.contractTypes = {
+  index: function index(params) {
+    // TODO: cache
+    return new Promise(function (resolve, reject) {
+      http.get('contracts/types', {
+        params: params
+      }).then(function (response) {
+        return resolve(response.data.data);
+      })["catch"](function (error) {
+        return reject(error);
+      });
+    });
+  }
+};
+api.properties = {
+  index: function index(params) {
+    return new Promise(function (resolve, reject) {
+      http.get('properties', {
+        params: params
+      }).then(function (response) {
+        return resolve(response.data.data);
+      })["catch"](function (error) {
+        return reject(error);
+      });
+    });
+  },
+  store: function store(property) {
+    return new Promise(function (resolve, reject) {
+      http.post('properties', property).then(function (response) {
+        return resolve(response.data.data);
+      })["catch"](function (error) {
+        return reject(error);
+      });
+    });
+  },
+  destroy: function destroy(property) {
+    return new Promise(function (resolve, reject) {
+      http["delete"]('properties/' + property.id).then(function (response) {
+        return resolve(response.data.data);
+      })["catch"](function (error) {
+        return reject(error);
+      });
+    });
+  }
+};
+api.contracts = {
+  store: function store(contract) {
+    return new Promise(function (resolve, reject) {
+      http.post('contracts', contract).then(function (response) {
+        return resolve(response.data.data);
+      })["catch"](function (error) {
+        return reject(error);
+      });
+    });
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (api);
+
+/***/ }),
+
+/***/ "./resources/js/store.js":
+/*!*******************************!*\
+  !*** ./resources/js/store.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./services */ "./resources/js/services.js");
+
+
+
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
+var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
+  state: {
+    countryId: 1,
+    // BR
+    locale: 'pt-br',
+    states: [],
+    cities: [],
+    contractTypes: [],
+    properties: []
+  },
+  getters: {
+    defaultCountryId: function defaultCountryId(state) {
+      return state.countryId;
+    },
+    currentLocale: function currentLocale(state) {
+      return state.locale;
+    },
+    allStates: function allStates(state) {
+      return state.states;
+    },
+    allCities: function allCities(state) {
+      return state.cities;
+    },
+    allContractTypes: function allContractTypes(state) {
+      return state.contractTypes;
+    },
+    allProperties: function allProperties(state) {
+      return state.properties;
+    },
+    propertiesWithoutContract: function propertiesWithoutContract(state, getters) {
+      return getters.allProperties.filter(function (property) {
+        return !property.contract;
+      });
+    },
+    addContractEnabled: function addContractEnabled(state, getters) {
+      return getters.propertiesWithoutContract.length > 0;
+    }
+  },
+  mutations: {
+    SET_STATES: function SET_STATES(state, states) {
+      state.states = states;
+    },
+    SET_CITIES: function SET_CITIES(state, cities) {
+      state.cities = cities;
+    },
+    SET_CONTRACT_TYPES: function SET_CONTRACT_TYPES(state, contractTypes) {
+      state.contractTypes = contractTypes;
+    },
+    SET_PROPERTIES: function SET_PROPERTIES(state, properties) {
+      state.properties = properties;
+    }
+  },
+  actions: {
+    fetchStates: function fetchStates(_ref, country) {
+      var commit = _ref.commit,
+          getters = _ref.getters;
+      var params = {
+        country_id: country ? country.id : getters.defaultCountryId
+      };
+      return new Promise(function (resolve, reject) {
+        _services__WEBPACK_IMPORTED_MODULE_2__["default"].states.index(params).then(function (data) {
+          commit('SET_STATES', data);
+          resolve(data);
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    },
+    fetchCities: function fetchCities(_ref2, state) {
+      var commit = _ref2.commit;
+      var params = {
+        state_id: state.id
+      };
+      return new Promise(function (resolve, reject) {
+        _services__WEBPACK_IMPORTED_MODULE_2__["default"].cities.index(params).then(function (data) {
+          commit('SET_CITIES', data);
+          resolve(data);
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    },
+    fetchContractTypes: function fetchContractTypes(_ref3) {
+      var commit = _ref3.commit;
+      return new Promise(function (resolve, reject) {
+        _services__WEBPACK_IMPORTED_MODULE_2__["default"].contractTypes.index().then(function (data) {
+          commit('SET_CONTRACT_TYPES', data);
+          resolve(data);
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    },
+    fetchProperties: function fetchProperties(_ref4, params) {
+      var commit = _ref4.commit;
+      return new Promise(function (resolve, reject) {
+        _services__WEBPACK_IMPORTED_MODULE_2__["default"].properties.index(params).then(function (data) {
+          commit('SET_PROPERTIES', data);
+          resolve(data);
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    },
+    addProperty: function addProperty(_ref5, property) {
+      var commit = _ref5.commit,
+          dispatch = _ref5.dispatch;
+      return new Promise(function (resolve, reject) {
+        _services__WEBPACK_IMPORTED_MODULE_2__["default"].properties.store(property).then(function (data) {
+          return resolve(dispatch('fetchProperties'));
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    },
+    removeProperty: function removeProperty(_ref6, property) {
+      var commit = _ref6.commit,
+          dispatch = _ref6.dispatch;
+      return new Promise(function (resolve, reject) {
+        _services__WEBPACK_IMPORTED_MODULE_2__["default"].properties.destroy(property).then(function (data) {
+          return resolve(dispatch('fetchProperties'));
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    },
+    addContract: function addContract(_ref7, contract) {
+      var commit = _ref7.commit,
+          dispatch = _ref7.dispatch;
+      return new Promise(function (resolve, reject) {
+        _services__WEBPACK_IMPORTED_MODULE_2__["default"].contracts.store(contract).then(function (data) {
+          return resolve(dispatch('fetchProperties'));
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    }
+  }
+});
+/* harmony default export */ __webpack_exports__["default"] = (store);
 
 /***/ }),
 
