@@ -2426,6 +2426,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -41364,7 +41374,17 @@ var render = function() {
                         "\n                        #\n                    "
                       )
                     ]
-                  )
+                  ),
+                  _vm._v(" "),
+                  _vm.order.column === "id"
+                    ? _c("span", [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(_vm.order.direction === "asc" ? "↑" : "↓") +
+                            "\n                    "
+                        )
+                      ])
+                    : _vm._e()
                 ]),
                 _vm._v(" "),
                 _c("td", { staticClass: "border-top-0 font-weight-bold" }, [
@@ -41385,7 +41405,17 @@ var render = function() {
                           "\n                    "
                       )
                     ]
-                  )
+                  ),
+                  _vm._v(" "),
+                  _vm.order.column === "email"
+                    ? _c("span", [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(_vm.order.direction === "asc" ? "↑" : "↓") +
+                            "\n                    "
+                        )
+                      ])
+                    : _vm._e()
                 ]),
                 _vm._v(" "),
                 _c("td", { staticClass: "border-top-0 font-weight-bold" }, [
@@ -41406,7 +41436,17 @@ var render = function() {
                           "\n                    "
                       )
                     ]
-                  )
+                  ),
+                  _vm._v(" "),
+                  _vm.order.column === "street"
+                    ? _c("span", [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(_vm.order.direction === "asc" ? "↑" : "↓") +
+                            "\n                    "
+                        )
+                      ])
+                    : _vm._e()
                 ]),
                 _vm._v(" "),
                 _c("td", { staticClass: "border-top-0 font-weight-bold" }, [

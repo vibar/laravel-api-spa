@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- TODO: refactoring columns repetition -->
         <table v-if="properties.length" class="table table-condensed table-hover">
             <thead>
                 <tr>
@@ -7,16 +8,25 @@
                         <a href="javascript:;" @click="orderBy('id')">
                             #
                         </a>
+                        <span v-if="order.column === 'id'">
+                            {{ order.direction === 'asc' ? '&uarr;' : '&darr;' }}
+                        </span>
                     </td>
                     <td class="border-top-0 font-weight-bold">
                         <a href="javascript:;" @click="orderBy('email')">
                             {{ $t('property.email') }}
                         </a>
+                        <span v-if="order.column === 'email'">
+                            {{ order.direction === 'asc' ? '&uarr;' : '&darr;' }}
+                        </span>
                     </td>
                     <td class="border-top-0 font-weight-bold">
                         <a href="javascript:;" @click="orderBy('street')">
                             {{ $t('property.address') }}
                         </a>
+                        <span v-if="order.column === 'street'">
+                            {{ order.direction === 'asc' ? '&uarr;' : '&darr;' }}
+                        </span>
                     </td>
                     <td class="border-top-0 font-weight-bold">
                         <a href="javascript:;">
