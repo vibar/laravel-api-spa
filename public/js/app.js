@@ -2226,10 +2226,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_mixins_Form__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  computed: {
+    states: function states() {
+      return this.$store.getters.allStates;
+    },
+    cities: function cities() {
+      return this.$store.getters.allCities;
+    }
+  },
+  watch: {
+    'form.state_id': function formState_id(value) {
+      if (value) {
+        var state = this.states.find(function (state) {
+          return state.id === value;
+        });
+        this.$store.dispatch('fetchCities', state);
+      }
+    }
+  },
+  created: function created() {
+    this.$store.dispatch('fetchStates');
+  },
   methods: {
     submit: function submit() {
       var vm = this;
@@ -2334,11 +2354,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   computed: {
     properties: function properties() {
-      var properties = this.$store.getters.allProperties;
-      return properties.map(function (p) {
-        return _objectSpread(_objectSpread({}, p), {}, {
-          address: [p.street, p.number, p.city.name, p.city.state.name].filter(function (str) {
-            return str;
+      return this.$store.getters.allProperties.map(function (property) {
+        return _objectSpread(_objectSpread({}, property), {}, {
+          address: [property.street, property.number, property.city.name, property.city.state.name].filter(function (value) {
+            return !!value;
           }).join(', ')
         });
       });
@@ -38692,11 +38711,14 @@ var render = function() {
                               }
                             }
                           },
-                          [
-                            _c("option", { attrs: { value: "1" } }, [
-                              _vm._v("São Paulo")
-                            ])
-                          ]
+                          _vm._l(_vm.states, function(state) {
+                            return _c(
+                              "option",
+                              { domProps: { value: state.id } },
+                              [_vm._v(_vm._s(state.name))]
+                            )
+                          }),
+                          0
                         ),
                         _vm._v(" "),
                         _vm.hasError("state_id")
@@ -38751,18 +38773,21 @@ var render = function() {
                             }
                           },
                           [
-                            _c("option", { attrs: { value: "1" } }, [
-                              _vm._v("São Paulo")
-                            ]),
+                            !_vm.form.state_id
+                              ? _c("option", { attrs: { value: "" } }, [
+                                  _vm._v("Selecione um estado")
+                                ])
+                              : _vm._e(),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "887u" } }, [
-                              _vm._v("Invalid")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "45567889900" } }, [
-                              _vm._v("Other Invalid")
-                            ])
-                          ]
+                            _vm._l(_vm.cities, function(city) {
+                              return _c(
+                                "option",
+                                { attrs: { value: "city.id" } },
+                                [_vm._v(_vm._s(city.name))]
+                              )
+                            })
+                          ],
+                          2
                         ),
                         _vm._v(" "),
                         _vm.hasError("city_id")
@@ -52664,10 +52689,18 @@ Vue.use(vue_the_mask__WEBPACK_IMPORTED_MODULE_0___default.a);
 Vue.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
 var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   state: {
+    states: [],
+    cities: [],
     contractTypes: [],
     properties: []
   },
   getters: {
+    allStates: function allStates(state) {
+      return state.states;
+    },
+    allCities: function allCities(state) {
+      return state.cities;
+    },
     allContractTypes: function allContractTypes(state) {
       return state.contractTypes;
     },
@@ -52676,6 +52709,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     }
   },
   mutations: {
+    SET_STATES: function SET_STATES(state, states) {
+      state.states = states;
+    },
+    SET_CITIES: function SET_CITIES(state, cities) {
+      state.cities = cities;
+    },
     SET_CONTRACT_TYPES: function SET_CONTRACT_TYPES(state, contractTypes) {
       state.contractTypes = contractTypes;
     },
@@ -52684,8 +52723,39 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     }
   },
   actions: {
-    fetchContractTypes: function fetchContractTypes(_ref) {
+    fetchStates: function fetchStates(_ref, country) {
       var commit = _ref.commit;
+      var defaultCountryId = 1;
+      var params = {
+        country_id: country ? country.id : defaultCountryId
+      };
+      return new Promise(function (resolve, reject) {
+        axios.get('/api/states?' + $.param(params)).then(function (response) {
+          var data = response.data.data;
+          commit('SET_STATES', data);
+          resolve(data);
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    },
+    fetchCities: function fetchCities(_ref2, state) {
+      var commit = _ref2.commit;
+      var params = {
+        state_id: state.id
+      };
+      return new Promise(function (resolve, reject) {
+        axios.get('/api/cities?' + $.param(params)).then(function (response) {
+          var data = response.data.data;
+          commit('SET_CITIES', data);
+          resolve(data);
+        })["catch"](function (error) {
+          return reject(error);
+        });
+      });
+    },
+    fetchContractTypes: function fetchContractTypes(_ref3) {
+      var commit = _ref3.commit;
       return new Promise(function (resolve, reject) {
         axios.get('/api/contracts/types').then(function (response) {
           var data = response.data.data;
@@ -52696,8 +52766,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
       });
     },
-    fetchProperties: function fetchProperties(_ref2, params) {
-      var commit = _ref2.commit;
+    fetchProperties: function fetchProperties(_ref4, params) {
+      var commit = _ref4.commit;
       return new Promise(function (resolve, reject) {
         axios.get('/api/properties?' + $.param(params)).then(function (response) {
           var data = response.data.data;
@@ -52708,9 +52778,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
       });
     },
-    addProperty: function addProperty(_ref3, property) {
-      var commit = _ref3.commit,
-          dispatch = _ref3.dispatch;
+    addProperty: function addProperty(_ref5, property) {
+      var commit = _ref5.commit,
+          dispatch = _ref5.dispatch;
       return new Promise(function (resolve, reject) {
         axios.post('/api/properties', property).then(function (response) {
           resolve(dispatch('fetchProperties'));
@@ -52719,9 +52789,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
       });
     },
-    removeProperty: function removeProperty(_ref4, property) {
-      var commit = _ref4.commit,
-          dispatch = _ref4.dispatch;
+    removeProperty: function removeProperty(_ref6, property) {
+      var commit = _ref6.commit,
+          dispatch = _ref6.dispatch;
       return new Promise(function (resolve, reject) {
         axios["delete"]('/api/properties/' + property.id).then(function (response) {
           resolve(dispatch('fetchProperties'));
@@ -52730,9 +52800,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         });
       });
     },
-    addContract: function addContract(_ref5, contract) {
-      var commit = _ref5.commit,
-          dispatch = _ref5.dispatch;
+    addContract: function addContract(_ref7, contract) {
+      var commit = _ref7.commit,
+          dispatch = _ref7.dispatch;
       return new Promise(function (resolve, reject) {
         axios.post('/api/contracts', contract).then(function (response) {
           resolve(dispatch('fetchProperties'));

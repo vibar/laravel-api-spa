@@ -68,11 +68,15 @@
 
         computed: {
             properties() {
-                let properties = this.$store.getters.allProperties
-                return properties.map(p => ({
-                    ...p,
-                    address: [p.street, p.number, p.city.name, p.city.state.name].filter(str => {
-                        return str
+                return this.$store.getters.allProperties.map(property => ({
+                    ...property,
+                    address: [
+                        property.street,
+                        property.number,
+                        property.city.name,
+                        property.city.state.name
+                    ].filter(value => {
+                        return !!value
                     }).join(', ')
                 }))
             },

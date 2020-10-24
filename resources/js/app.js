@@ -17,10 +17,18 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
+        states: [],
+        cities: [],
         contractTypes: [],
         properties: [],
     },
     getters: {
+        allStates: state => {
+            return state.states
+        },
+        allCities: state => {
+            return state.cities
+        },
         allContractTypes: state => {
             return state.contractTypes
         },
@@ -29,6 +37,12 @@ const store = new Vuex.Store({
         },
     },
     mutations: {
+        SET_STATES (state, states) {
+            state.states = states
+        },
+        SET_CITIES (state, cities) {
+            state.cities = cities
+        },
         SET_CONTRACT_TYPES (state, contractTypes) {
             state.contractTypes = contractTypes
         },
@@ -37,6 +51,31 @@ const store = new Vuex.Store({
         },
     },
     actions: {
+        fetchStates ({ commit }, country) {
+            let defaultCountryId = 1
+            let params = {country_id: country ? country.id : defaultCountryId}
+            return new Promise((resolve, reject) => {
+                axios.get('/api/states?' + $.param(params))
+                    .then(response => {
+                        let data = response.data.data
+                        commit('SET_STATES', data)
+                        resolve(data)
+                    })
+                    .catch(error => reject(error))
+            })
+        },
+        fetchCities ({ commit }, state) {
+            let params = {state_id: state.id}
+            return new Promise((resolve, reject) => {
+                axios.get('/api/cities?' + $.param(params))
+                    .then(response => {
+                        let data = response.data.data
+                        commit('SET_CITIES', data)
+                        resolve(data)
+                    })
+                    .catch(error => reject(error))
+            })
+        },
         fetchContractTypes ({ commit }) {
             return new Promise((resolve, reject) => {
                 axios.get('/api/contracts/types')

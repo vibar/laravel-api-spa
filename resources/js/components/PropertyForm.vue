@@ -27,7 +27,7 @@
                                 <div class="form-group">
                                     <label>Estado <span class="text-danger">*</span></label>
                                     <select v-model="form.state_id" required :class="`form-control ${errorClass('state_id')}`">
-                                        <option value="1">São Paulo</option>
+                                        <option v-for="state in states" :value="state.id">{{ state.name }}</option>
                                     </select>
                                     <div v-if="hasError('state_id')" class="invalid-feedback">
                                         {{ getError('state_id') }}
@@ -40,9 +40,8 @@
                                 <div class="form-group">
                                     <label>Cidade <span class="text-danger">*</span></label>
                                     <select v-model="form.city_id" required :class="`form-control ${errorClass('city_id')}`">
-                                        <option value="1">São Paulo</option>
-                                        <option value="887u">Invalid</option>
-                                        <option value="45567889900">Other Invalid</option>
+                                        <option v-if="!form.state_id" value="">Selecione um estado</option>
+                                        <option v-for="city in cities" :value="city.id">{{ city.name }}</option>
                                     </select>
                                     <div v-if="hasError('city_id')" class="invalid-feedback">
                                         {{ getError('city_id') }}
@@ -105,6 +104,28 @@
     export default {
 
         mixins: [Form],
+
+        computed: {
+            states() {
+                return this.$store.getters.allStates
+            },
+            cities() {
+                return this.$store.getters.allCities
+            },
+        },
+
+        watch: {
+            'form.state_id'(value) {
+                if (value) {
+                    let state = this.states.find(state => state.id === value)
+                    this.$store.dispatch('fetchCities', state)
+                }
+            },
+        },
+
+        created() {
+            this.$store.dispatch('fetchStates')
+        },
 
         methods: {
 
