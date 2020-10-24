@@ -54,7 +54,7 @@ class ContractStoreRequest extends FormRequest
 
                 if ($document && $type && $type->document_validator) {
                     if (!RespectValidator::{$type->document_validator}()->validate($document)) {
-                        $validator->errors()->add('document', 'The selected document is invalid.');
+                        $validator->errors()->add('document', __('validation.requests.document.invalid'));
                     }
                 }
             }
@@ -64,7 +64,7 @@ class ContractStoreRequest extends FormRequest
                 $property = Property::find($propertyId);
 
                 if ($property && $property->contract()->count()) {
-                    $validator->errors()->add('property_id', 'The selected property id already has a contract.');
+                    $validator->errors()->add('property_id', __('validation.requests.property.has_contract'));
                 }
             }
 

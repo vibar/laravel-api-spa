@@ -147,4 +147,19 @@ return [
 
     'attributes' => [],
 
+    /*
+    |--------------------------------------------------------------------------
+    | After validation requests
+    |--------------------------------------------------------------------------
+    */
+
+    'requests' => [
+        'document' => [
+            'invalid' => 'The selected document is invalid.',
+        ],
+        'property' => [
+            'has_contract' => 'The selected property id already has a contract.',
+        ],
+    ],
+
 ];
