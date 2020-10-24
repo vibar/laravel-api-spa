@@ -6,18 +6,18 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="align-middle float-left mb-0" style="line-height: 2.1;">
-                    @{{ $tc('property.label', 2) }}
+                    <span v-text="$tc('property.label', 2)"></span>
                 </h5>
                 <div class="btn-group float-right" role="group">
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                        @{{ $t('add') }}
+                        <span v-text="$t('add')"></span>
                     </button>
                     <div class="dropdown-menu">
                         <a @click="addProperty" class="dropdown-item" href="javascript:;">
-                            @{{ $tc('property.label') }}
+                            <span v-text="$tc('property.label')"></span>
                         </a>
                         <a v-if="addContractEnabled" @click="addContract" class="dropdown-item" href="javascript:;">
-                            @{{ $tc('contract.label') }}
+                            <span v-text="$tc('contract.label')"></span>
                         </a>
                     </div>
                 </div>
