@@ -17,7 +17,7 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
-        $properties = Property::with('contract', 'city.state.country')
+        $properties = Property::with('contract.type', 'city.state.country')
             ->orderBy(
                 $request->input('order.column', 'email'),
                 $request->input('order.direction', 'asc')

@@ -4,7 +4,9 @@
             <div class="modal-content">
                 <form @submit.prevent="submit" ref="form" class="needs-validation" novalidate>
                     <div class="modal-header">
-                        <h5 class="modal-title">Novo contrato</h5>
+                        <h5 class="modal-title">
+                            {{ form.id ? `Contrato #${form.id}` : 'Novo contrato' }}
+                        </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -57,7 +59,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button v-if="!form.id" type="submit" class="btn btn-primary">Salvar</button>
                     </div>
                 </form>
             </div>
@@ -81,7 +83,13 @@
 
         computed: {
             properties() {
-                let properties = this.$store.getters.propertiesWithoutContract
+                let vm = this
+                let properties = vm.$store.getters.propertiesWithoutContract
+                if (vm.form.id) {
+                    properties = vm.$store.getters.allProperties.filter(property => {
+                        return property.contract && property.contract.id === vm.form.id
+                    })
+                }
                 return properties.map(property => ({
                     ...property,
                     address: [
@@ -120,6 +128,21 @@
         },
 
         methods: {
+
+            fill(property) {
+                if (!property) {
+                    return {}
+                }
+                let contract = property.contract
+                if (!contract) {
+                    return {
+                        property_id: property.id,
+                    }
+                }
+                contract.property_id = property.id
+                contract.type_id = contract.type.id
+                return contract
+            },
 
             submit() {
                 let vm = this

@@ -11,10 +11,7 @@
         mounted() {
             let vm = this
             vm.$on('open', (form) => {
-                vm.reset()
-                if (form) {
-                    vm.form = form
-                }
+                vm.reset(form)
                 $(vm.$el).modal('show')
             })
             vm.$on('close', () => {
@@ -24,11 +21,18 @@
 
         methods: {
 
-            reset() {
+            reset(form) {
                 let vm = this
-                vm.form = {}
+                vm.form = vm.fill(form)
                 vm.$refs.form.classList.remove('was-validated')
+                vm.$refs.form.querySelectorAll('.form-control').forEach(input => {
+                    input.disabled = !!vm.form.id
+                })
                 vm.setError()
+            },
+
+            fill(form) {
+                return form ? form : {}
             },
 
             hasError(key) {

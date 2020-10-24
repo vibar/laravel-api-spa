@@ -4,7 +4,9 @@
             <div class="modal-content">
                 <form @submit.prevent="submit" ref="form" class="needs-validation" novalidate>
                     <div class="modal-header">
-                        <h5 class="modal-title">Nova propriedade</h5>
+                        <h5 class="modal-title">
+                            {{ form.id ? `Propriedade #${form.id}` : 'Nova propriedade' }}
+                        </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -147,6 +149,15 @@
                     vm.$refs.form.classList.remove('was-validated')
                     vm.setError(error)
                 })
+            },
+
+            fill(property) {
+                if (!property) {
+                    return {}
+                }
+                property.state_id = property.city.state.id
+                property.city_id = property.city.id
+                return property
             },
         },
     }

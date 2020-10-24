@@ -4,6 +4,11 @@
             <thead>
                 <tr>
                     <td class="border-top-0 font-weight-bold">
+                        <a href="javascript:;" @click="orderBy('id')">
+                            #
+                        </a>
+                    </td>
+                    <td class="border-top-0 font-weight-bold">
                         <a href="javascript:;" @click="orderBy('email')">
                             Nome
                         </a>
@@ -22,6 +27,9 @@
             </thead>
             <tbody>
                 <tr v-for="property in properties">
+                    <td>
+                        <a href="javascript:;" @click="getProperty(property)">{{ property.id }}</a>
+                    </td>
                     <td>{{ property.email }}</td>
                     <td>{{ property.address }}</td>
                     <td>
@@ -72,8 +80,7 @@
 
         computed: {
             properties() {
-                let properties = this.$store.getters.allProperties
-                return properties.map(property => ({
+                return this.$store.getters.allProperties.map(property => ({
                     ...property,
                     address: [
                         property.street,
@@ -88,6 +95,11 @@
         },
 
         methods: {
+
+            getProperty(property) {
+                let vm = this
+                vm.$root.$refs.propertyForm.$emit('open', property)
+            },
 
             contract(property) {
                 let vm = this

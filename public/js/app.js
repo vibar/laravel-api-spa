@@ -1984,6 +1984,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -1996,7 +1998,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   computed: {
     properties: function properties() {
-      var properties = this.$store.getters.propertiesWithoutContract;
+      var vm = this;
+      var properties = vm.$store.getters.propertiesWithoutContract;
+
+      if (vm.form.id) {
+        properties = vm.$store.getters.allProperties.filter(function (property) {
+          return property.contract && property.contract.id === vm.form.id;
+        });
+      }
+
       return properties.map(function (property) {
         return _objectSpread(_objectSpread({}, property), {}, {
           address: [property.street, property.number, property.complement, property.district].filter(function (value) {
@@ -2032,6 +2042,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   methods: {
+    fill: function fill(property) {
+      if (!property) {
+        return {};
+      }
+
+      var contract = property.contract;
+
+      if (!contract) {
+        return {
+          property_id: property.id
+        };
+      }
+
+      contract.property_id = property.id;
+      contract.type_id = contract.type.id;
+      return contract;
+    },
     submit: function submit() {
       var vm = this;
       vm.$refs.form.classList.add('was-validated');
@@ -2246,6 +2273,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_mixins_Form__WEBPACK_IMPORTED_MODULE_0__["default"]],
@@ -2287,6 +2316,15 @@ __webpack_require__.r(__webpack_exports__);
         vm.$refs.form.classList.remove('was-validated');
         vm.setError(error);
       });
+    },
+    fill: function fill(property) {
+      if (!property) {
+        return {};
+      }
+
+      property.state_id = property.city.state.id;
+      property.city_id = property.city.id;
+      return property;
     }
   }
 });
@@ -2363,6 +2401,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2377,8 +2423,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   computed: {
     properties: function properties() {
-      var properties = this.$store.getters.allProperties;
-      return properties.map(function (property) {
+      return this.$store.getters.allProperties.map(function (property) {
         return _objectSpread(_objectSpread({}, property), {}, {
           address: [property.street, property.number, property.city.name, property.city.state.name].filter(function (value) {
             return !!value;
@@ -2388,6 +2433,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   methods: {
+    getProperty: function getProperty(property) {
+      var vm = this;
+      vm.$root.$refs.propertyForm.$emit('open', property);
+    },
     contract: function contract(property) {
       var vm = this;
       vm.$refs.contractForm.$emit('open', property);
@@ -2451,12 +2500,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var vm = this;
     vm.$on('open', function (form) {
-      vm.reset();
-
-      if (form) {
-        vm.form = form;
-      }
-
+      vm.reset(form);
       $(vm.$el).modal('show');
     });
     vm.$on('close', function () {
@@ -2464,11 +2508,17 @@ __webpack_require__.r(__webpack_exports__);
     });
   },
   methods: {
-    reset: function reset() {
+    reset: function reset(form) {
       var vm = this;
-      vm.form = {};
+      vm.form = vm.fill(form);
       vm.$refs.form.classList.remove('was-validated');
+      vm.$refs.form.querySelectorAll('.form-control').forEach(function (input) {
+        input.disabled = !!vm.form.id;
+      });
       vm.setError();
+    },
+    fill: function fill(form) {
+      return form ? form : {};
     },
     hasError: function hasError(key) {
       if (!this.error.errors) {
@@ -38148,7 +38198,21 @@ var render = function() {
               }
             },
             [
-              _vm._m(0),
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h5", { staticClass: "modal-title" }, [
+                  _vm._v(
+                    "\n                        " +
+                      _vm._s(
+                        _vm.form.id
+                          ? "Contrato #" + _vm.form.id
+                          : "Novo contrato"
+                      ) +
+                      "\n                    "
+                  )
+                ]),
+                _vm._v(" "),
+                _vm._m(0)
+              ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _vm.error.message
@@ -38398,7 +38462,27 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(6)
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-light",
+                    attrs: { type: "button", "data-dismiss": "modal" }
+                  },
+                  [_vm._v("Cancelar")]
+                ),
+                _vm._v(" "),
+                !_vm.form.id
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "submit" }
+                      },
+                      [_vm._v("Salvar")]
+                    )
+                  : _vm._e()
+              ])
             ]
           )
         ])
@@ -38411,22 +38495,18 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", { staticClass: "modal-title" }, [_vm._v("Novo contrato")]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      )
-    ])
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
   },
   function() {
     var _vm = this
@@ -38471,27 +38551,6 @@ var staticRenderFns = [
     return _c("label", [
       _vm._v("Nome "),
       _c("span", { staticClass: "text-danger" }, [_vm._v("*")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-footer" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-light",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("Cancelar")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
-        [_vm._v("Salvar")]
-      )
     ])
   }
 ]
@@ -38655,7 +38714,21 @@ var render = function() {
                 }
               },
               [
-                _vm._m(0),
+                _c("div", { staticClass: "modal-header" }, [
+                  _c("h5", { staticClass: "modal-title" }, [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(
+                          _vm.form.id
+                            ? "Propriedade #" + _vm.form.id
+                            : "Nova propriedade"
+                        ) +
+                        "\n                    "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(0)
+                ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-body" }, [
                   _vm.error.message
@@ -39013,22 +39086,18 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", { staticClass: "modal-title" }, [_vm._v("Nova propriedade")]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      )
-    ])
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
   },
   function() {
     var _vm = this
@@ -39132,6 +39201,25 @@ var render = function() {
                       attrs: { href: "javascript:;" },
                       on: {
                         click: function($event) {
+                          return _vm.orderBy("id")
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                        #\n                    "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("td", { staticClass: "border-top-0 font-weight-bold" }, [
+                  _c(
+                    "a",
+                    {
+                      attrs: { href: "javascript:;" },
+                      on: {
+                        click: function($event) {
                           return _vm.orderBy("email")
                         }
                       }
@@ -39171,6 +39259,21 @@ var render = function() {
               "tbody",
               _vm._l(_vm.properties, function(property) {
                 return _c("tr", [
+                  _c("td", [
+                    _c(
+                      "a",
+                      {
+                        attrs: { href: "javascript:;" },
+                        on: {
+                          click: function($event) {
+                            return _vm.getProperty(property)
+                          }
+                        }
+                      },
+                      [_vm._v(_vm._s(property.id))]
+                    )
+                  ]),
+                  _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(property.email))]),
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(property.address))]),
@@ -52763,6 +52866,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   actions: {
     fetchStates: function fetchStates(_ref, country) {
       var commit = _ref.commit;
+      // TODO: cache
       var defaultCountryId = 1;
       var params = {
         country_id: country ? country.id : defaultCountryId
@@ -52779,6 +52883,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     fetchCities: function fetchCities(_ref2, state) {
       var commit = _ref2.commit;
+      // TODO: cache
       var params = {
         state_id: state.id
       };

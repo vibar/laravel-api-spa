@@ -55,6 +55,7 @@ const store = new Vuex.Store({
     },
     actions: {
         fetchStates ({ commit }, country) {
+            // TODO: cache
             let defaultCountryId = 1
             let params = {country_id: country ? country.id : defaultCountryId}
             return new Promise((resolve, reject) => {
@@ -68,6 +69,7 @@ const store = new Vuex.Store({
             })
         },
         fetchCities ({ commit }, state) {
+            // TODO: cache
             let params = {state_id: state.id}
             return new Promise((resolve, reject) => {
                 axios.get('/api/cities?' + $.param(params))
