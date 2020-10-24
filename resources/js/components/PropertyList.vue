@@ -10,17 +10,17 @@
                     </td>
                     <td class="border-top-0 font-weight-bold">
                         <a href="javascript:;" @click="orderBy('email')">
-                            Nome
+                            {{ $t('property.email') }}
                         </a>
                     </td>
                     <td class="border-top-0 font-weight-bold">
                         <a href="javascript:;" @click="orderBy('street')">
-                            Endereço
+                            {{ $t('property.address') }}
                         </a>
                     </td>
                     <td class="border-top-0 font-weight-bold">
                         <a href="javascript:;">
-                            Status
+                            {{ $t('property.status') }}
                         </a>
                     </td>
                 </tr>
@@ -28,13 +28,15 @@
             <tbody>
                 <tr v-for="property in properties">
                     <td>
-                        <a href="javascript:;" @click="getProperty(property)">{{ property.id }}</a>
+                        <a class="font-weight-bold" @click="propertyView(property)" href="javascript:;" >
+                            {{ property.id }}
+                        </a>
                     </td>
                     <td>{{ property.email }}</td>
                     <td>{{ property.address }}</td>
                     <td>
-                        <a href="javascript:;" @click="contract(property)" :class="`badge badge-${property.contract ? 'success' : 'danger'} p-2`">
-                            {{ property.contract ? 'CONTRATADO' : 'NÃO CONTRATADO' }}
+                        <a href="javascript:;" @click="contractView(property)" :class="`text-uppercase badge badge-${property.contract ? 'success' : 'danger'} p-2`">
+                            {{ property.contract ? $t(`property.contracted`) : $t('property.not_contracted') }}
                         </a>
                     </td>
                     <td>
@@ -47,12 +49,12 @@
         </table>
 
         <div v-else>
-            Nenhuma propriedade cadastrada.
+            {{ $t('property.empty_results') }}
         </div>
 
         <modal ref="removeConfirm" @action="removeProperty"
-            title="Deseja realmente remover essa propriedade?"
-            action-label="Remover"
+            :title="$t('property.remove_confirm')"
+            :action-label="$t('property.remove')"
             action-type="danger"
         />
 
@@ -96,12 +98,12 @@
 
         methods: {
 
-            getProperty(property) {
+            propertyView(property) {
                 let vm = this
                 vm.$root.$refs.propertyForm.$emit('open', property)
             },
 
-            contract(property) {
+            contractView(property) {
                 let vm = this
                 vm.$refs.contractForm.$emit('open', property)
             },
@@ -118,16 +120,6 @@
                 }).catch(error => {
                     vm.$refs.removeConfirm.$emit('error', error)
                 })
-            },
-
-            getLabel(column) {
-                switch (column) {
-                    case 'email': return 'E-mail'
-                    case 'address': return 'Endereço'
-                    case 'status': return 'Status'
-                    default:
-                        return ''
-                }
             },
 
             orderBy(column) {

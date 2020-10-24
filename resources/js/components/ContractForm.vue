@@ -5,7 +5,7 @@
                 <form @submit.prevent="submit" ref="form" class="needs-validation" novalidate>
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            {{ form.id ? `Contrato #${form.id}` : 'Novo contrato' }}
+                            {{ form.id ? `${$tc('contract.label')} #${form.id}` : $t('contract.add') }}
                         </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -16,7 +16,7 @@
                             {{ error.message }}
                         </div>
                         <div class="form-group">
-                            <label>Propriedade <span class="text-danger">*</span></label>
+                            <label>{{ $tc('property.label') }} <span class="text-danger">*</span></label>
                             <select v-model="form.property_id" required :class="`form-control ${errorClass('property_id')}`">
                                 <option v-for="property in properties" :value="property.id">
                                     {{ property.address }}
@@ -27,7 +27,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Tipo de pessoa <span class="text-danger">*</span></label>
+                            <label>{{ $tc('contract.type') }} <span class="text-danger">*</span></label>
                             <select v-model="form.type_id" required :class="`form-control ${errorClass('type_id')}`">
                                 <option v-for="type in types" :value="type.id">{{ type.name }}</option>
                             </select>
@@ -36,21 +36,21 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Documento <span class="text-danger">*</span></label>
+                            <label>{{ $tc('contract.document') }} <span class="text-danger">*</span></label>
                             <input v-model="form.document" v-mask="documentMask" :pattern="documentRegex" required type="text" :class="`form-control ${errorClass('document')}`">
                             <div v-if="hasError('document')" class="invalid-feedback">
                                 {{ getError('document') }}
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>E-mail <span class="text-danger">*</span></label>
+                            <label>{{ $t('contract.email') }} <span class="text-danger">*</span></label>
                             <input v-model="form.email" type="email" required :class="`form-control ${errorClass('email')}`">
                             <div v-if="hasError('email')" class="invalid-feedback">
                                 {{ getError('email') }}
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Nome <span class="text-danger">*</span></label>
+                            <label>{{ $t('contract.name') }} <span class="text-danger">*</span></label>
                             <input v-model="form.name" required type="text" :class="`form-control ${errorClass('name')}`">
                             <div v-if="hasError('name')" class="invalid-feedback">
                                 {{ getError('name') }}
@@ -58,8 +58,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                        <button v-if="!form.id" type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">{{ $t('cancel') }}</button>
+                        <button v-if="!form.id" type="submit" class="btn btn-primary">{{ $t('save') }}</button>
                     </div>
                 </form>
             </div>

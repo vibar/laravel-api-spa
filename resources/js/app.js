@@ -17,6 +17,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
+        locale: 'pt-br',
         states: [],
         cities: [],
         contractTypes: [],
@@ -133,6 +134,23 @@ const store = new Vuex.Store({
     }
 })
 
+import VueI18n from 'vue-i18n'
+
+Vue.use(VueI18n)
+
+let locale = 'pt-br'
+
+// Ready translated locale messages
+const messages = {
+    [locale]: require('./messages/' + locale).default
+}
+
+// Create VueI18n instance with options
+const i18n = new VueI18n({
+    locale: locale,
+    messages,
+})
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -157,6 +175,7 @@ Vue.component('Form', require('./components/mixins/Form').default)
  */
 
 const app = new Vue({
+    i18n,
     el: '#app',
     store,
     computed: {

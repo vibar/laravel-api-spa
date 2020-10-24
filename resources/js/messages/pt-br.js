@@ -1,0 +1,36 @@
+export default {
+    add: 'Adicionar',
+    cancel: 'Cancelar',
+    save: 'Salvar',
+    property: {
+        label: '| Propriedade | Propriedades',
+        email: 'E-mail',
+        address: 'Endereço',
+        status: 'Status',
+        street: 'Rua',
+        number: 'Número',
+        complement: 'Complemento',
+        district: 'Bairro',
+        contracted: 'Contratado',
+        not_contracted: 'Não contratado',
+        empty_results: 'Nenhuma propriedade cadastrada',
+        remove: 'Remover',
+        remove_confirm: 'Deseja realmente remover essa propriedade?',
+        add: 'Nova propriedade',
+    },
+    contract: {
+        label: '| Contrato | Contratos',
+        type: 'Tipo de pessoa',
+        document: 'Documento',
+        name: 'Nome',
+        email: 'E-mail',
+        add: 'Novo contrato',
+    },
+    state: {
+        label: '| Estado | Estados',
+        select: 'Selecione um estado',
+    },
+    city: {
+        label: '| Cidade | Cidades',
+    },
+}

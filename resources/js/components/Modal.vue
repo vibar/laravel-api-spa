@@ -18,7 +18,7 @@
                     <slot name="body"></slot>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">{{ $t('cancel') }}</button>
                     <button v-if="actionLabel" @click="$emit('action', context)" :class="`btn btn-${actionType}`" type="button">
                         {{ actionLabel }}
                     </button>
