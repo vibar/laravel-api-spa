@@ -1,37 +1,15 @@
 <template>
     <div>
-        <!-- TODO: refactoring columns repetition -->
         <table v-if="properties.length" class="table table-condensed table-hover">
             <thead>
                 <tr>
-                    <td class="border-top-0 font-weight-bold">
-                        <a href="javascript:;" @click="orderBy('id')">
-                            #
+                    <td v-for="column in columns" class="border-top-0 font-weight-bold">
+                        <a href="javascript:;" @click="orderBy(column)">
+                            {{ column.label }}
                         </a>
-                        <span v-if="order.column === 'id'">
+                        <span v-if="order.column === column.id">
                             {{ order.direction === 'asc' ? '&uarr;' : '&darr;' }}
                         </span>
-                    </td>
-                    <td class="border-top-0 font-weight-bold">
-                        <a href="javascript:;" @click="orderBy('email')">
-                            {{ $t('property.email') }}
-                        </a>
-                        <span v-if="order.column === 'email'">
-                            {{ order.direction === 'asc' ? '&uarr;' : '&darr;' }}
-                        </span>
-                    </td>
-                    <td class="border-top-0 font-weight-bold">
-                        <a href="javascript:;" @click="orderBy('street')">
-                            {{ $t('property.address') }}
-                        </a>
-                        <span v-if="order.column === 'street'">
-                            {{ order.direction === 'asc' ? '&uarr;' : '&darr;' }}
-                        </span>
-                    </td>
-                    <td class="border-top-0 font-weight-bold">
-                        <a href="javascript:;">
-                            {{ $t('property.status') }}
-                        </a>
                     </td>
                 </tr>
             </thead>
@@ -79,6 +57,29 @@
 
         data() {
             return {
+                columns: [
+                    {
+                        id: 'id',
+                        label: '#',
+                        sort: true,
+                    }, {
+                        id: 'email',
+                        label: this.$t('property.email'),
+                        sort: true,
+                    }, {
+                        id: 'street',
+                        label: this.$t('property.address'),
+                        sort: true,
+                    }, {
+                        id: 'status',
+                        label: this.$t('property.status'),
+                        sort: false,
+                    }, {
+                        id: '',
+                        label: '',
+                        sort: false,
+                    },
+                ],
                 order: {
                     column: 'email',
                     direction: 'asc',
@@ -131,10 +132,13 @@
             },
 
             orderBy(column) {
+                if (!column.sort) {
+                    return
+                }
                 let vm = this
-                vm.order.column = column
-                vm.order.direction = vm.order.direction === 'asc' ? 'desc' : 'asc'
-                this.$store.dispatch('fetchProperties', {'order': vm.order})
+                vm.order.direction = vm.order.column === column.id && vm.order.direction === 'asc' ? 'desc' : 'asc'
+                vm.order.column = column.id
+                vm.$store.dispatch('fetchProperties', {'order': vm.order})
             },
         },
     }
