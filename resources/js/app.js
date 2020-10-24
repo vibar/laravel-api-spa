@@ -28,7 +28,7 @@ Vue.use(VueTheMask)
 Vue.component('property-list', require('./components/PropertyList').default)
 Vue.component('property-form', require('./components/PropertyForm').default)
 Vue.component('contract-form', require('./components/ContractForm').default)
-Vue.component('modal', require('./components/Modal').default)
+Vue.component('modal', require('./components/general/Modal').default)
 Vue.component('Form', require('./components/mixins/Form').default)
 
 /**
@@ -44,6 +44,14 @@ const app = new Vue({
     computed: {
         addContractEnabled() {
             return this.$store.getters.addContractEnabled
+        },
+    },
+    methods: {
+        addProperty() {
+            this.$refs.propertyForm.$emit('open')
+        },
+        addContract() {
+            this.$refs.contractForm.$emit('open')
         },
     },
 })

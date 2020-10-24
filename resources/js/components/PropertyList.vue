@@ -50,7 +50,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="javascript:;" @click="remove(property)" class="close btn btn-sm btn-secondary text-white">
+                        <a href="javascript:;" @click="removeConfirm(property)" class="close btn btn-sm btn-secondary text-white">
                             <span>&times;</span>
                         </a>
                     </td>
@@ -118,18 +118,16 @@
                 vm.$refs.contractForm.$emit('open', property)
             },
 
-            remove(property) {
+            removeConfirm(property) {
                 let vm = this
                 vm.$refs.removeConfirm.$emit('open', property.address, property)
             },
 
             removeProperty(property) {
                 let vm = this
-                vm.$store.dispatch('removeProperty', property).then(response => {
-                    vm.$refs.removeConfirm.$emit('close')
-                }).catch(error => {
-                    vm.$refs.removeConfirm.$emit('error', error)
-                })
+                vm.$store.dispatch('removeProperty', property)
+                    .then(response => vm.$refs.removeConfirm.$emit('close'))
+                    .catch(error => vm.$refs.removeConfirm.$emit('error', error))
             },
 
             orderBy(column) {

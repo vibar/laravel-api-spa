@@ -2,7 +2,7 @@
     <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form @submit.prevent="submit" ref="form" class="needs-validation" novalidate>
+                <form @submit.prevent="submit('addProperty')" ref="form" class="needs-validation" novalidate>
                     <div class="modal-header">
                         <h5 class="modal-title">
                             {{ form.id ? `${$tc('property.label')} #${form.id}` : $t('property.add') }}
@@ -130,26 +130,6 @@
         },
 
         methods: {
-
-            submit() {
-                let vm = this
-
-                vm.$refs.form.classList.add('was-validated')
-
-                if (vm.$refs.form.checkValidity() === false) {
-                    return
-                }
-
-                vm.setError()
-
-                vm.$store.dispatch('addProperty', vm.form).then(response => {
-                    vm.$refs.form.classList.remove('was-validated')
-                    vm.$emit('close')
-                }).catch(error => {
-                    vm.$refs.form.classList.remove('was-validated')
-                    vm.setError(error)
-                })
-            },
 
             fill(property) {
                 if (!property) {

@@ -31,6 +31,26 @@
                 vm.setError()
             },
 
+            submit(action) {
+                let vm = this
+
+                vm.$refs.form.classList.add('was-validated')
+
+                if (vm.$refs.form.checkValidity() === false) {
+                    return
+                }
+
+                vm.setError()
+
+                vm.$store.dispatch(action, vm.form).then(response => {
+                    vm.$refs.form.classList.remove('was-validated')
+                    vm.$emit('close')
+                }).catch(error => {
+                    vm.$refs.form.classList.remove('was-validated')
+                    vm.setError(error)
+                })
+            },
+
             fill(form) {
                 return form ? form : {}
             },

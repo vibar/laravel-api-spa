@@ -2,7 +2,7 @@
     <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form @submit.prevent="submit" ref="form" class="needs-validation" novalidate>
+                <form @submit.prevent="submit('addContract')" ref="form" class="needs-validation" novalidate>
                     <div class="modal-header">
                         <h5 class="modal-title">
                             {{ form.id ? `${$tc('contract.label')} #${form.id}` : $t('contract.add') }}
@@ -152,28 +152,6 @@
                 form.type_id = property.contract.type.id
                 return form
             },
-
-            submit() {
-                let vm = this
-
-                vm.$refs.form.classList.add('was-validated')
-
-                if (vm.$refs.form.checkValidity() === false) {
-                    return
-                }
-
-                vm.setError()
-
-                vm.$store.dispatch('addContract', vm.form).then(response => {
-                    vm.$refs.form.classList.remove('was-validated')
-                    vm.$emit('close')
-                }).catch(error => {
-                    vm.$refs.form.classList.remove('was-validated')
-                    vm.setError(error)
-                })
-            },
-
         },
-
     }
 </script>

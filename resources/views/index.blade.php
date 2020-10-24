@@ -13,10 +13,10 @@
                         @{{ $t('add') }}
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" @click="$refs.propertyForm.$emit('open')" href="javascript:;">
+                        <a @click="addProperty" class="dropdown-item" href="javascript:;">
                             @{{ $tc('property.label') }}
                         </a>
-                        <a v-if="addContractEnabled" class="dropdown-item" @click="$refs.contractForm.$emit('open')" href="javascript:;">
+                        <a v-if="addContractEnabled" @click="addContract" class="dropdown-item" href="javascript:;">
                             @{{ $tc('contract.label') }}
                         </a>
                     </div>
