@@ -23,8 +23,6 @@ class PropertyController extends Controller
                 $request->input('order.direction', 'asc')
             )->get();
 
-        // TODO: paginate
-
         return PropertyResource::collection($properties);
     }
 
@@ -41,29 +39,6 @@ class PropertyController extends Controller
         return (new PropertyResource($property))
             ->response()
             ->setStatusCode(201);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Property  $property
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Property $property)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Property  $property
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Property $property)
-    {
-        //
     }
 
     /**

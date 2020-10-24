@@ -21,8 +21,6 @@ class Property extends JsonResource
             'number' => $this->number,
             'complement' => $this->complement,
             'district' => $this->district,
-            'created_at' => (string) $this->created_at,
-            'updated_at' => (string) $this->updated_at,
             'city' => new City($this->whenLoaded('city')),
             'contract' => new Contract($this->whenLoaded('contract')),
         ];

@@ -175,7 +175,7 @@ class PropertyTest extends TestCase
 
         $response = $this->json('DELETE', '/api/properties/'.$property->getRouteKey());
 
-        $data = Arr::except($property->toArray(), ['city_id']);
+        $data = Arr::except($property->toArray(), ['city_id', 'created_at', 'updated_at']);
 
         $response->assertStatus(200)
             ->assertJson(compact('data'));
