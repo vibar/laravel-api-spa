@@ -110,35 +110,34 @@
         methods: {
 
             propertyView(property) {
-                let vm = this
-                vm.$root.$refs.propertyForm.$emit('open', property)
+                this.$root.$refs.propertyForm.$emit('open', property)
             },
 
             contractView(property) {
-                let vm = this
-                vm.$refs.contractForm.$emit('open', property)
+                this.$refs.contractForm.$emit('open', property)
             },
 
             removeConfirm(property) {
-                let vm = this
-                vm.$refs.removeConfirm.$emit('open', property.address, property)
+                this.$refs.removeConfirm.$emit('open', property.address, property)
             },
 
-            removeProperty(property) {
-                let vm = this
-                vm.$store.dispatch('removeProperty', property)
-                    .then(response => vm.$refs.removeConfirm.$emit('close'))
-                    .catch(error => vm.$refs.removeConfirm.$emit('error', error))
+            async removeProperty(property) {
+                try {
+                    await this.$store.dispatch('removeProperty', property)
+                    this.$refs.removeConfirm.$emit('close')
+                } catch (error) {
+                    this.$refs.removeConfirm.$emit('error', error)
+                }
             },
 
             orderBy(column) {
                 if (!column.sort) {
                     return
                 }
-                let vm = this
-                vm.order.direction = vm.order.column === column.id && vm.order.direction === 'asc' ? 'desc' : 'asc'
-                vm.order.column = column.id
-                vm.$store.dispatch('fetchProperties', {'order': vm.order})
+                let direction = this.order.column === column.id && this.order.direction === 'asc'
+                this.order.direction = direction ? 'desc' : 'asc'
+                this.order.column = column.id
+                this.$store.dispatch('fetchProperties', {'order': this.order})
             },
         },
     }

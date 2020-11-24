@@ -31,24 +31,23 @@
                 vm.setError()
             },
 
-            submit(action) {
-                let vm = this
+            async submit(action) {
+                this.$refs.form.classList.add('was-validated')
 
-                vm.$refs.form.classList.add('was-validated')
-
-                if (vm.$refs.form.checkValidity() === false) {
+                if (this.$refs.form.checkValidity() === false) {
                     return
                 }
 
-                vm.setError()
+                this.setError()
 
-                vm.$store.dispatch(action, vm.form).then(response => {
-                    vm.$refs.form.classList.remove('was-validated')
-                    vm.$emit('close')
-                }).catch(error => {
-                    vm.$refs.form.classList.remove('was-validated')
-                    vm.setError(error)
-                })
+                try {
+                    await this.$store.dispatch(action, this.form)
+                    this.$refs.form.classList.remove('was-validated')
+                    this.$emit('close')
+                } catch (error) {
+                    this.$refs.form.classList.remove('was-validated')
+                    this.setError(error)
+                }
             },
 
             fill(form) {
@@ -77,10 +76,8 @@
             },
 
             setError(error) {
-                let vm = this
-
                 if (!error) {
-                    vm.error = {
+                    this.error = {
                         errors: [],
                         message: '',
                     }
@@ -88,7 +85,7 @@
                 }
 
                 if (!error.response) {
-                    vm.error = {
+                    this.error = {
                         errors: [],
                         message: error.message,
                     }
@@ -98,20 +95,20 @@
                 if (error.response.status === 422) {
                     let errors = error.response.data.errors
                     if (errors.general && errors.general.length) {
-                        vm.error = {
+                        this.error = {
                             errors: [],
                             message: errors.general[0],
                         }
                         return
                     }
-                    vm.error = {
+                    this.error = {
                         errors: errors,
                         message: '',
                     }
                     return
                 }
 
-                vm.error = {
+                this.error = {
                     errors: [],
                     message: error.response.data.message,
                 }

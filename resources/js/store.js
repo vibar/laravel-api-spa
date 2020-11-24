@@ -54,60 +54,34 @@ const store = new Vuex.Store({
         },
     },
     actions: {
-        fetchStates ({ commit, getters }, country) {
+        async fetchStates ({ commit, getters }, country) {
             let params = {country_id: country ? country.id : getters.defaultCountryId}
-            return new Promise((resolve, reject) => {
-                api.states.index(params).then(data => {
-                    commit('SET_STATES', data)
-                    resolve(data)
-                }).catch(error => reject(error))
-            })
+            let res = await api.states.index(params)
+            commit('SET_STATES', res.data.data)
         },
-        fetchCities ({ commit }, state) {
-            let params = {state_id: state.id}
-            return new Promise((resolve, reject) => {
-                api.cities.index(params).then(data => {
-                    commit('SET_CITIES', data)
-                    resolve(data)
-                }).catch(error => reject(error))
-            })
+        async fetchCities ({ commit }, state) {
+            let res = await api.cities.index({state_id: state.id})
+            commit('SET_CITIES', res.data.data)
         },
-        fetchContractTypes ({ commit }) {
-            return new Promise((resolve, reject) => {
-                api.contractTypes.index().then(data => {
-                    commit('SET_CONTRACT_TYPES', data)
-                    resolve(data)
-                }).catch(error => reject(error))
-            })
+        async fetchContractTypes ({ commit }) {
+            let res = await api.contractTypes.index()
+            commit('SET_CONTRACT_TYPES', res.data.data)
         },
-        fetchProperties ({ commit }, params) {
-            return new Promise((resolve, reject) => {
-                api.properties.index(params).then(data => {
-                    commit('SET_PROPERTIES', data)
-                    resolve(data)
-                }).catch(error => reject(error))
-            })
+        async fetchProperties ({ commit }, params) {
+            let res = await api.properties.index(params)
+            commit('SET_PROPERTIES', res.data.data)
         },
-        addProperty ({ commit, dispatch }, property) {
-            return new Promise((resolve, reject) => {
-                api.properties.store(property)
-                    .then(data => resolve(dispatch('fetchProperties')))
-                    .catch(error => reject(error))
-            })
+        async addProperty ({ commit, dispatch }, property) {
+            await api.properties.store(property)
+            dispatch('fetchProperties')
         },
-        removeProperty ({ commit, dispatch }, property) {
-            return new Promise((resolve, reject) => {
-                api.properties.destroy(property)
-                    .then(data => resolve(dispatch('fetchProperties')))
-                    .catch(error => reject(error))
-            })
+        async removeProperty ({ commit, dispatch }, property) {
+            await api.properties.destroy(property)
+            dispatch('fetchProperties')
         },
-        addContract ({ commit, dispatch }, contract) {
-            return new Promise((resolve, reject) => {
-                api.contracts.store(contract)
-                    .then(data => resolve(dispatch('fetchProperties')))
-                    .catch(error => reject(error))
-            })
+        async addContract ({ commit, dispatch }, contract) {
+            await api.contracts.store(contract)
+            dispatch('fetchProperties')
         }
     }
 })

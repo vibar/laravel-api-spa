@@ -9,73 +9,36 @@ const http = axios.create({
     },
 })
 
-const api = {}
-
-api.states = {
-    index(params) {
-        // TODO: cache
-        return new Promise((resolve, reject) => {
-            http.get('states', {params})
-                .then(response => resolve(response.data.data))
-                .catch(error => reject(error))
-        })
-    }
-}
-
-api.cities = {
-    index(params) {
-        // TODO: cache
-        return new Promise((resolve, reject) => {
-            http.get('cities', {params})
-                .then(response => resolve(response.data.data))
-                .catch(error => reject(error))
-        })
-    }
-}
-
-api.contractTypes = {
-    index(params) {
-        // TODO: cache
-        return new Promise((resolve, reject) => {
-            http.get('contracts/types', {params})
-                .then(response => resolve(response.data.data))
-                .catch(error => reject(error))
-        })
-    }
-}
-
-api.properties = {
-    index(params) {
-        return new Promise((resolve, reject) => {
-            http.get('properties', {params})
-                .then(response => resolve(response.data.data))
-                .catch(error => reject(error))
-        })
+export default {
+    states: {
+        index(params) {
+            return http.get('states', {params})
+        }
     },
-    store(property) {
-        return new Promise((resolve, reject) => {
-            http.post('properties', property)
-                .then(response => resolve(response.data.data))
-                .catch(error => reject(error))
-        })
+    cities: {
+        index(params) {
+            return http.get('cities', {params})
+        }
     },
-    destroy(property) {
-        return new Promise((resolve, reject) => {
-            http.delete('properties/' + property.id)
-                .then(response => resolve(response.data.data))
-                .catch(error => reject(error))
-        })
+    contractTypes: {
+        index(params) {
+            return http.get('contracts/types', {params})
+        }
+    },
+    properties: {
+        index(params) {
+            return http.get('properties', {params})
+        },
+        store(property) {
+            return http.post('properties', property)
+        },
+        destroy(property) {
+            return http.delete('properties/' + property.id)
+        },
+    },
+    contracts: {
+        store(contract) {
+            return http.post('contracts', contract)
+        },
     },
 }
-
-api.contracts = {
-    store(contract) {
-        return new Promise((resolve, reject) => {
-            http.post('contracts', contract)
-                .then(response => resolve(response.data.data))
-                .catch(error => reject(error))
-        })
-    },
-}
-
-export default api
