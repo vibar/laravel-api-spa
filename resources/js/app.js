@@ -25,11 +25,13 @@ Vue.use(VueTheMask)
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-Vue.component('property-list', require('./components/PropertyList').default)
-Vue.component('property-form', require('./components/PropertyForm').default)
-Vue.component('contract-form', require('./components/ContractForm').default)
-Vue.component('modal', require('./components/general/Modal').default)
+Vue.component('PropertyList', require('./components/PropertyList').default)
+Vue.component('PropertyForm', require('./components/PropertyForm').default)
+Vue.component('ContractForm', require('./components/ContractForm').default)
+Vue.component('ErrorMessage', require('./components/general/ErrorMessage').default)
+Vue.component('Modal', require('./components/general/Modal').default)
 Vue.component('Form', require('./components/mixins/Form').default)
+Vue.component('Error', require('./components/mixins/Error').default)
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

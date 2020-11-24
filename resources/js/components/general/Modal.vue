@@ -30,7 +30,12 @@
 
 <script>
 
+    import Error from '../mixins/Error'
+
     export default {
+
+        mixins: [Error],
+
         props: {
             title: {
                 type: String,
@@ -47,6 +52,7 @@
                 default: 'primary',
             },
         },
+
         data() {
             return {
                 body: this.content,
@@ -54,6 +60,7 @@
                 error: {},
             }
         },
+
         created() {
             let vm = this
             vm.$on('open', (content, context) => {
@@ -66,7 +73,7 @@
                 $(vm.$el).modal('hide')
             })
             vm.$on('error', (error) => {
-                vm.error = error
+                vm.setError(error)
             })
         },
     }

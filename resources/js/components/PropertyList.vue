@@ -1,5 +1,6 @@
 <template>
     <div>
+        <error-message :error="error"></error-message>
         <table v-if="properties.length" class="table table-condensed table-hover">
             <thead>
                 <tr>
@@ -53,7 +54,11 @@
 
 <script>
 
+    import Error from './mixins/Error'
+
     export default {
+
+        mixins: [Error],
 
         data() {
             return {
@@ -87,8 +92,12 @@
             }
         },
 
-        created() {
-            this.$store.dispatch('fetchProperties')
+        async created() {
+            try {
+                await this.$store.dispatch('fetchProperties')
+            } catch (error) {
+                this.setError(error)
+            }
         },
 
         computed: {

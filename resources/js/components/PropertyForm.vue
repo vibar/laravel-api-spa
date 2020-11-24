@@ -12,9 +12,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div v-if="error.message" class="alert alert-danger">
-                            {{ error.message }}
-                        </div>
+                        <error-message :error="error"></error-message>
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">

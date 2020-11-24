@@ -12,9 +12,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div v-if="error.message" class="alert alert-danger">
-                            {{ error.message }}
-                        </div>
+                        <error-message :error="error"></error-message>
                         <div class="form-group">
                             <label>{{ $tc('property.label') }} <span class="text-danger">*</span></label>
                             <select v-model="form.property_id" required :class="`form-control ${errorClass('property_id')}`">
